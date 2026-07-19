@@ -1,0 +1,159 @@
+{
+  "basics": {
+    "name": "Alex Muster",
+    "label": "Head of Product / Director-Level Product Leader",
+    "email": "alex.muster@example.com",
+    "phone": "+49 - 170 0000 000",
+    "url": "https://example.com",
+    "location": {
+      "address": "Musterstrasse 12",
+      "postalCode": "10115",
+      "city": "Berlin",
+      "countryCode": "DE"
+    },
+    "profiles": [
+      { "network": "LinkedIn", "username": "alexmusterprofile", "url": "https://www.linkedin.com/in/alexmusterprofile" }
+    ],
+    "summary": [
+      "Product and digital leader with 15+ years of experience building and scaling AI-enabled, marketplace, consumer, and operational platforms across mobility, industrial technology, and SaaS.",
+      "Currently Head of Digital Products at Beispielwerk, reporting directly to the CEO and leading Product, Design, Engineering, and Marketing across the digital ecosystem.",
+      "Track record of accelerating go-to-market by 12 months, growing organic acquisition by 25% across 5 markets, doubling engagement, and increasing subscription revenue by 30%.",
+      "Experienced in AI strategy, agentic products, predictive models, data platforms, monetization, and logistics systems spanning first-mile, mid-mile, and last-mile operations."
+    ],
+    "x_highlights": [
+      "Built AI/ML applications across computer vision, supply-demand prediction, consumer demand, and agentic product initiatives.",
+      "Led operations digitization through partner platforms, digital handover, supply-chain automation, and S&OP process automation.",
+      "Managed organizations ranging from senior PMs and cross-functional product teams to a 50-person software organization across six teams.",
+      "Contributed to IPO-readiness and leadership transitions, including a Series C fundraising strategy."
+    ],
+    "x_birthDate": "01/01/1990",
+    "x_residency": "German citizen, based in Berlin",
+    "picture": null
+  },
+  "work": [
+    {
+      "name": "Beispielwerk GmbH",
+      "position": "Head of Digital Products",
+      "startDate": "Feb 2024",
+      "endDate": "Present",
+      "highlights": [
+        "Report directly to the CEO; lead product vision, AI strategy, roadmap, and execution across the company's digital ecosystem.",
+        "Lead four departments — Product, Design, Engineering, and Marketing — driving digital transformation across the organization.",
+        "Accelerated go-to-market by 12 months through partnerships, platform redesign, and data-driven roadmap execution.",
+        "Contribute to Series C fundraising strategy and key P&L decisions while shaping AI-enabled platform initiatives."
+      ]
+    },
+    {
+      "name": "Wagenmarkt24 GmbH",
+      "position": "Head of Product / Head of Apps",
+      "startDate": "Aug 2021",
+      "endDate": "Jan 2024",
+      "highlights": [
+        "Owned app vision, strategy, and roadmap across iOS, Android, and white-label apps for a leading European used-car marketplace.",
+        "Increased organic acquisition by 25% across 5 markets, doubled engagement, and improved conversion by 20%.",
+        "Led monetization and marketplace improvements including sponsored listings and consumer demand use cases that drove 15% advertising revenue growth.",
+        "Led 4 senior PMs, 3 app marketers, 2 business analysts, and 20 developers across growth, engagement, conversion, and revenue."
+      ]
+    },
+    {
+      "name": "Fahrwerk Mobility GmbH",
+      "position": "Product Lead",
+      "startDate": "Feb 2018",
+      "endDate": "Aug 2021",
+      "highlights": [
+        "Led product strategy across partner platform, purchasing, operations, remarketing, customer apps, and digital handover workflows in a multi-market mobility business.",
+        "Owned first-mile, mid-mile, and last-mile logistics, including supply-chain automation, S&OP process automation, and mid-mile planning systems.",
+        "Partnered with data teams to establish data lake foundations and build predictive, supply-demand, and operational planning models that reduced logistics-related costs.",
+        "Led asset financing and production product responsibilities; increased subscription revenue by 30% and vehicle contribution margin by 40%."
+      ]
+    },
+    {
+      "name": "Industrieoptik AG",
+      "position": "Head of Software / Product Development",
+      "startDate": "May 2013",
+      "endDate": "Jan 2018",
+      "highlights": [
+        "Led software and product development for computer-vision solutions, managing 50 people across six teams and three departments.",
+        "Built AI and machine-vision systems for industrial metrology and automotive manufacturing, including a damage-detection model for precision machine environments.",
+        "Delivered robotics-based production cells and optical measurement systems that reduced production errors and cycle times.",
+        "Partnered with C-level leaders on strategic, operational, and financial priorities including budgets, subcontracts, and vendor decisions."
+      ]
+    },
+    {
+      "name": "Datendienst Consulting",
+      "position": "Engineering Lead / IT Analyst",
+      "startDate": "Sep 2008",
+      "endDate": "May 2013",
+      "highlights": [
+        "Built embedded software for automotive and avionics applications, including cockpit display hardware, diagnostic tools, and validation systems.",
+        "Developed testing frameworks and system validation tooling to improve reliability, quality, and compliance."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Technische Universität Beispielstadt",
+      "area": "Electrical & Electronics Engineering",
+      "studyType": "B.Eng.",
+      "startDate": "2004",
+      "endDate": "2008"
+    }
+  ],
+  "certificates": [
+    { "name": "Industrial robot handling", "issuer": "Robotik Akademie", "date": "2017" },
+    { "name": "Coordinate metrology program", "issuer": "Messtechnik Academy", "date": "2018" },
+    { "name": "Advanced C++ & C#", "issuer": "PC College Beispielstadt", "date": "2011" },
+    { "name": "OOP Design Patterns", "issuer": "Consulting Learning Center", "date": "2010" }
+  ],
+  "awards": [
+    { "title": "Best App — national app store award 2023", "awarder": "Tech & Media Jury" },
+    { "title": "Manufacturing quality consultant at a design center", "awarder": "Automotive OEM" },
+    { "title": "Most Valuable Professional Award", "awarder": "Industrieoptik AG" },
+    { "title": "Service & Commitment Award", "awarder": "Datendienst Consulting" }
+  ],
+  "languages": [
+    { "language": "German", "fluency": "Native" },
+    { "language": "English", "fluency": "Fluent" },
+    { "language": "Spanish", "fluency": "Basic" }
+  ],
+  "x_coreCompetence": [
+    "AI Product Strategy",
+    "Marketplace Growth & Monetization",
+    "Logistics & Fulfilment Systems",
+    "Predictive Models & Data Platforms",
+    "Supply Chain & S&OP Automation",
+    "Platform Product Management",
+    "Scaling Product Organizations",
+    "Cross-Functional Leadership"
+  ],
+  "x_advisory": [
+    {
+      "role": "Executive Advisory Board Member",
+      "organization": "StartHilfe Ventures",
+      "startDate": "Aug 2023",
+      "endDate": "Jul 2024"
+    }
+  ],
+  "x_portfolio": [
+    "All Beispielwerk digital products",
+    "Wagenmarkt24 apps",
+    "White-label marketplace apps",
+    "Subscription & logistics apps",
+    "Partner platform app",
+    "Digital handover app",
+    "Fine-handling OCR app",
+    "Asset management & fleet management",
+    "3D projection tooling",
+    "AI inspection box",
+    "Reverse engineering suite",
+    "CAD workstation tooling"
+  ],
+  "x_memberships": [
+    { "organization": "Green Earth Initiative", "since": "since 2008" },
+    { "organization": "Wildlife Fund", "since": "since 2010" },
+    { "organization": "Automotive Circle", "since": "since 2017" }
+  ],
+  "meta": {
+    "template": "berlin-blue"
+  }
+}
