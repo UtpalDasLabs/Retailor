@@ -20,8 +20,8 @@ npm run build      # static production build in dist/
 
 Open the app, then:
 
-1. **Load your CV** — the editor starts blank. Type your details in the **Editor** tab, or `Import JSON` (JSON Resume schema, see below) to load a file you saved before, or `Load sample` to explore the fictional example. Every tab has a plain-English "How to use this" panel. A photo is optional and stays in localStorage.
-2. **Get tailoring feedback** — paste the Prompt Pack (below) into any LLM chat along with your resume JSON and a job description. Save the reply as a Markdown file.
+1. **Load your CV** — the editor starts blank. Type your details in the **Editor** tab, or `Import JSON` (JSON Resume schema, see below) to load a file you saved before, or `Load sample` to explore the fictional example. Every tab has a plain-English "How to use this" panel. A photo is optional and stays in localStorage. Want a clean slate? The **Clear all** button at the top of the Editor wipes every field back to empty (with a confirmation prompt).
+2. **Get tailoring feedback** — paste the Prompt Pack into any LLM chat along with your resume JSON and a job description. The Prompt Pack is available right in the **Import Feedback** tab with a one-click **Copy** button (and reproduced below). Save the reply as a Markdown file.
 3. **Import Feedback** — drop the Markdown file (or paste the reply). Retailor finds the last ` ```cv-edits ` block, validates it, and shows every proposed edit with before/after and the model's reasoning. Accept or reject each one.
 4. **Preview & download** — the A4 preview updates instantly. `Download PDF` uses the browser print pipeline: choose *Save as PDF*, margins *None*, *Background graphics* on. The output is vector, with selectable text.
 5. **Export JSON** — keep your updated master file (it downloads as `*.private.json`, which git ignores).
@@ -56,7 +56,7 @@ See `src/data/example-feedback.md` for a complete example (also available in-app
 
 ## Prompt Pack
 
-Append this to any LLM chat / project instructions:
+The **Import Feedback** tab shows this text with a **Copy** button, so you usually don't need to leave the app. It's reproduced here for reference — append it to any LLM chat / project instructions:
 
 > After your assessment, always end your reply with a fenced code block labeled `cv-edits` containing JSON with `version` (always 1), `targetRole`, `rationale`, and an `edits` array of `{op, path, value, why}` operations against my resume JSON (JSON Resume schema, arrays zero-indexed, paths as JSON Pointers, ops: set/replace/insert/remove/move). Propose 5–15 surgical edits; never invent facts not present in my CV.
 
