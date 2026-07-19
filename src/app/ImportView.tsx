@@ -9,6 +9,7 @@ import {
 } from '../edits/apply'
 import { readFileText } from '../storage/local'
 import exampleFeedback from '../data/example-feedback.md?raw'
+import { HelpBanner } from './HelpBanner'
 
 function show(value: unknown): string {
   if (value === undefined) return '—'
@@ -73,6 +74,32 @@ export function ImportView({
 
   return (
     <div>
+      <HelpBanner
+        id="import"
+        title="Let any AI tailor your CV for a specific job"
+        steps={[
+          <>
+            Click <strong>Export JSON</strong> (top-right) to download your CV file.
+          </>,
+          <>
+            Open any AI chat (ChatGPT, Claude, Gemini…). Paste your CV file, the job
+            description, and the <strong>Prompt Pack</strong> from the README. Ask it to
+            tailor your CV.
+          </>,
+          <>
+            Copy the AI's reply (or save it as a <code>.md</code> file). Paste it into the
+            box below, or drop the file on it.
+          </>,
+          <>
+            Click <strong>Find &amp; review edits</strong>, tick the changes you want, then
+            <strong> Apply</strong>. Open the <strong>Preview</strong> tab to see the result.
+          </>,
+          <>
+            New here? Click <strong>Try the bundled example</strong> below to see exactly how
+            this works.
+          </>,
+        ]}
+      />
       <div
         className={'imp-drop' + (drag ? ' drag' : '')}
         onDragOver={(e) => {

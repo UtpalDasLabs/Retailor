@@ -8,7 +8,7 @@ Retailor lets you keep your CV as structured data (JSON Resume + extensions), ap
 
 - **All processing is local.** Retailor is a 100% static, client-side app. Your CV data, photo, and (in future) API keys live in your browser's `localStorage` only and never leave it.
 - **No network calls at runtime.** Fonts are self-hosted; there are no analytics, trackers, or API requests. Verify it yourself in the browser's network tab.
-- The repository ships only a **fictional sample persona** ("Alex Muster"). Keep your real data in `*.private.json` files or a `private/` folder — both are gitignored.
+- The repository ships only a **fictional sample persona** ("Robin Fields"), and the editor **starts empty** so your data is never pre-filled. Keep your real data in `*.private.json` files or a `private/` folder — both are gitignored.
 
 ## Quick start
 
@@ -20,7 +20,7 @@ npm run build      # static production build in dist/
 
 Open the app, then:
 
-1. **Load your CV** — `Import JSON` (JSON Resume schema, see below), or start from the sample and edit everything in the **Editor** tab. A photo is optional and stays in localStorage.
+1. **Load your CV** — the editor starts blank. Type your details in the **Editor** tab, or `Import JSON` (JSON Resume schema, see below) to load a file you saved before, or `Load sample` to explore the fictional example. Every tab has a plain-English "How to use this" panel. A photo is optional and stays in localStorage.
 2. **Get tailoring feedback** — paste the Prompt Pack (below) into any LLM chat along with your resume JSON and a job description. Save the reply as a Markdown file.
 3. **Import Feedback** — drop the Markdown file (or paste the reply). Retailor finds the last ` ```cv-edits ` block, validates it, and shows every proposed edit with before/after and the model's reasoning. Accept or reject each one.
 4. **Preview & download** — the A4 preview updates instantly. `Download PDF` uses the browser print pipeline: choose *Save as PDF*, margins *None*, *Background graphics* on. The output is vector, with selectable text.

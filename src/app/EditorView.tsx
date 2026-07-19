@@ -3,6 +3,7 @@ import { Resume } from '../schema/resume'
 import { readImageAsDataUrl } from '../storage/local'
 import { setIn } from './setIn'
 import { ObjectListEditor, StringListEditor, TextField } from './fields'
+import { HelpBanner } from './HelpBanner'
 
 export function EditorView({
   resume,
@@ -26,6 +27,29 @@ export function EditorView({
 
   return (
     <div className="ed-grid">
+      <HelpBanner
+        id="editor"
+        title="This is where you type your CV"
+        steps={[
+          <>
+            Fill in the boxes below. Click any section heading (like{' '}
+            <strong>Work experience</strong>) to open or close it.
+          </>,
+          <>
+            Use the <strong>+ Add</strong> buttons to add a job, a bullet point, a skill,
+            and so on. Use <strong>↑ ↓</strong> to reorder and <strong>✕</strong> to delete.
+          </>,
+          <>
+            Already have a Retailor file saved? Click <strong>Import JSON</strong> (top-right)
+            to load it instead of typing.
+          </>,
+          <>
+            Your work is saved in this browser automatically. Click the{' '}
+            <strong>Preview</strong> tab to see your CV, or <strong>Export JSON</strong> to
+            save a backup file.
+          </>,
+        ]}
+      />
       <details className="card" open>
         <summary>Basics</summary>
         <div className="photo-row">

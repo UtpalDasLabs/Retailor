@@ -3,8 +3,19 @@ import { Resume } from '../schema/resume'
 import { getTemplate, templates } from '../templates/registry'
 import { providers } from '../llm/provider'
 import { setIn } from './setIn'
+import { HelpBanner } from './HelpBanner'
 
 const PAGE_W_PX = (210 / 25.4) * 96 // 210mm at CSS 96dpi
+
+function isBlankResume(resume: Resume): boolean {
+  const b = resume.basics ?? {}
+  return (
+    !b.name?.trim() &&
+    !b.label?.trim() &&
+    (b.summary ?? []).length === 0 &&
+    (resume.work ?? []).length === 0
+  )
+}
 
 export function PreviewView({
   resume,
@@ -18,6 +29,7 @@ export function PreviewView({
   const [showPrintHelp, setShowPrintHelp] = useState(false)
   const template = getTemplate(resume.meta?.template)
   const Component = template.component
+  const blank = isBlankResume(resume)
 
   useEffect(() => {
     const el = stageRef.current
@@ -32,6 +44,48 @@ export function PreviewView({
 
   return (
     <div>
+      <HelpBanner
+        id="preview"
+        title="See your finished CV and save it as a PDF"
+        steps={[
+          <>
+            This is your live CV — it updates automatically as you edit.
+          </>,
+          <>
+            Choose a design from the <strong>Template</strong> menu below.
+          </>,
+          <>
+            Click <strong>Download PDF</strong>. In the print window that opens, choose:{' '}
+            <strong>Destination: Save as PDF</strong>, <strong>Margins: None</strong>, and turn{' '}
+            <strong>Background graphics ON</strong> (so the blue side-bar prints).
+          </>,
+          <>
+            Nothing showing yet? Go to the <strong>Editor</strong> tab to add your details, or
+            click <strong>Import JSON</strong> (top-right) to load a saved CV.
+          </>,
+        ]}
+      />
+
+      {blank ? (
+        <div className="pv-empty">
+          <h2>Your CV is empty right now</h2>
+          <p>Add your details and this preview fills in automatically. To get started:</p>
+          <ul>
+            <li>
+              Open the <strong>Editor</strong> tab and type your information, or
+            </li>
+            <li>
+              Click <strong>Import JSON</strong> (top-right) to load a CV file you saved
+              before, or
+            </li>
+            <li>
+              Click <strong>Load sample</strong> (top-right) to explore a fictional example
+              first.
+            </li>
+          </ul>
+        </div>
+      ) : null}
+
       <div className="pv-toolbar">
         <label className="field-label" htmlFor="tpl-select">
           Template

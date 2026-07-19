@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Resume, validateResume } from '../schema/resume'
 import sampleResume from '../data/sample-resume.json'
+import { emptyResume } from '../data/empty-resume'
 import {
   clearResume,
   exportResumeJson,
@@ -15,19 +16,25 @@ import './app.css'
 
 type Tab = 'editor' | 'import' | 'preview'
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'editor', label: 'Editor' },
-  { id: 'import', label: 'Import Feedback' },
-  { id: 'preview', label: 'Preview' },
+const TABS: { id: Tab; label: string; hint: string }[] = [
+  { id: 'editor', label: 'Editor', hint: 'Type or edit your CV details' },
+  { id: 'import', label: 'Import Feedback', hint: 'Apply tailoring edits from any AI' },
+  { id: 'preview', label: 'Preview', hint: 'See your CV and save it as a PDF' },
 ]
 
+// A first-time visitor (nothing saved yet) starts with a blank CV, so every
+// editor field is empty. Returning visitors get their saved data back.
+const savedResume = loadResume()
+
 function initialResume(): Resume {
-  return loadResume() ?? (structuredClone(sampleResume) as Resume)
+  return savedResume ?? emptyResume()
 }
 
 export function App() {
   const [resume, setResume] = useState<Resume>(initialResume)
-  const [tab, setTab] = useState<Tab>('preview')
+  // Newcomers land on the Editor (there's nothing to preview yet); people with
+  // saved data land on the Preview.
+  const [tab, setTab] = useState<Tab>(savedResume ? 'preview' : 'editor')
   const [toast, setToast] = useState<string | null>(null)
   const jsonInput = useRef<HTMLInputElement>(null)
   const toastTimer = useRef<number>()
@@ -70,6 +77,7 @@ export function App() {
               role="tab"
               aria-selected={tab === t.id}
               className="app-tab"
+              title={t.hint}
               onClick={() => setTab(t.id)}
             >
               {t.label}
@@ -88,24 +96,36 @@ export function App() {
               e.target.value = ''
             }}
           />
-          <button type="button" className="btn-ghost btn" onClick={() => jsonInput.current?.click()}>
+          <button
+            type="button"
+            className="btn-ghost btn"
+            title="Load a CV you saved earlier (a .json file from Export)"
+            onClick={() => jsonInput.current?.click()}
+          >
             Import JSON
           </button>
-          <button type="button" className="btn-ghost btn" onClick={() => exportResumeJson(resume)}>
+          <button
+            type="button"
+            className="btn-ghost btn"
+            title="Save your CV to your computer as a backup file (.json)"
+            onClick={() => exportResumeJson(resume)}
+          >
             Export JSON
           </button>
           <button
             type="button"
             className="btn-ghost btn"
+            title="Fill the app with a fictional example CV so you can explore"
             onClick={() => {
               if (
                 window.confirm(
-                  'Replace the current CV with the bundled fictional sample? Your current data will be overwritten (export it first if needed).',
+                  'Replace the current CV with a fictional example? Your current data will be overwritten — click "Export JSON" first if you want to keep it.',
                 )
               ) {
                 clearResume()
                 setResume(structuredClone(sampleResume) as Resume)
-                showToast('Sample persona loaded.')
+                setTab('preview')
+                showToast('Fictional example loaded — explore, then Load a blank CV or Import your own.')
               }
             }}
           >
