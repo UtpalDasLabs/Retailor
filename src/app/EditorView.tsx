@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Resume } from '../schema/resume'
+import { emptyResume } from '../data/empty-resume'
 import { readImageAsDataUrl } from '../storage/local'
 import { setIn } from './setIn'
 import { ObjectListEditor, StringListEditor, TextField } from './fields'
@@ -50,6 +51,25 @@ export function EditorView({
           </>,
         ]}
       />
+      <div className="ed-toolbar">
+        <button
+          type="button"
+          className="btn btn-sm btn-danger"
+          title="Wipe every field and start over with a blank CV"
+          onClick={() => {
+            if (
+              window.confirm(
+                'Clear everything and start with a blank CV? This wipes every field. Click "Export JSON" first if you want to keep a copy.',
+              )
+            ) {
+              onChange(emptyResume())
+              onToast('Editor cleared — every field is now empty.')
+            }
+          }}
+        >
+          Clear all
+        </button>
+      </div>
       <details className="card" open>
         <summary>Basics</summary>
         <div className="photo-row">

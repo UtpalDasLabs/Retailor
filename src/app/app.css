@@ -252,6 +252,12 @@ select:focus-visible {
   display: grid;
   gap: 16px;
 }
+.ed-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 .card {
   background: var(--card);
   border: 1px solid var(--line);
@@ -398,6 +404,31 @@ select {
   gap: 8px;
   margin: 12px 0 18px;
   flex-wrap: wrap;
+}
+.prompt-pack {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+.prompt-pack-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.prompt-pack-body {
+  margin: 12px 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
 }
 .err-box {
   background: #fdf1f0;

@@ -9,6 +9,7 @@ import {
 } from '../edits/apply'
 import { readFileText } from '../storage/local'
 import exampleFeedback from '../data/example-feedback.md?raw'
+import { PROMPT_PACK } from '../data/prompt-pack'
 import { HelpBanner } from './HelpBanner'
 
 function show(value: unknown): string {
@@ -100,6 +101,35 @@ export function ImportView({
           </>,
         ]}
       />
+
+      <section className="prompt-pack">
+        <div className="prompt-pack-head">
+          <div>
+            <strong>Prompt Pack</strong>
+            <div className="hint">
+              Copy this and paste it into any LLM (ChatGPT, Claude, Gemini…) along with your
+              resume JSON and the job description. It makes the model end its reply with a{' '}
+              <code>cv-edits</code> block you can import below.
+            </div>
+          </div>
+          <button
+            type="button"
+            className="btn btn-sm"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(PROMPT_PACK)
+                onToast('Prompt Pack copied to clipboard.')
+              } catch {
+                onToast('Could not access the clipboard — select the text and copy it manually.')
+              }
+            }}
+          >
+            Copy
+          </button>
+        </div>
+        <pre className="prompt-pack-body">{PROMPT_PACK}</pre>
+      </section>
+
       <div
         className={'imp-drop' + (drag ? ' drag' : '')}
         onDragOver={(e) => {
