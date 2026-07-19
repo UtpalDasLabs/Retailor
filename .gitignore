@@ -1,0 +1,11 @@
+node_modules
+dist
+*.local
+*.log
+
+# Real personal data never enters the repo
+*.private.json
+/private/
+
+# TS build cache
+*.tsbuildinfo
