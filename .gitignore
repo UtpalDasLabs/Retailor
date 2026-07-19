@@ -9,3 +9,6 @@ dist
 
 # TS build cache
 *.tsbuildinfo
+
+# macOS
+.DS_Store
