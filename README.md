@@ -58,7 +58,9 @@ See `src/data/example-feedback.md` for a complete example (also available in-app
 
 The **Import Feedback** tab shows this text with a **Copy** button, so you usually don't need to leave the app. It's reproduced here for reference — append it to any LLM chat / project instructions:
 
-> After your assessment, always end your reply with a fenced code block labeled `cv-edits` containing JSON with `version` (always 1), `targetRole`, `rationale`, and an `edits` array of `{op, path, value, why}` operations against my resume JSON (JSON Resume schema, arrays zero-indexed, paths as JSON Pointers, ops: set/replace/insert/remove/move). Propose 5–15 surgical edits; never invent facts not present in my CV.
+> After your assessment, always end your reply with a fenced code block labeled `cv-edits` containing JSON with `version` set to the number 1 (not the string "1.0"), `targetRole`, `rationale`, and an `edits` array of `{op, path, value, why}` operations against my resume JSON (JSON Resume schema, arrays zero-indexed, paths as JSON Pointers). Each `op` must be exactly one of: set, replace, insert, remove, move (use "insert" to add an array item and "remove" to delete one). Propose 5–15 surgical edits; never invent facts not present in my CV.
+
+Retailor is forgiving of common LLM slips: a stringified version (`"1.0"`), extra whitespace, and op synonyms (`add`, `delete`, `update`, `append`) are normalized automatically on import. Anything it can't safely interpret is shown as a clear, per-edit error.
 
 Then paste your resume JSON (export it from Retailor) and the job description, and ask for tailoring advice.
 

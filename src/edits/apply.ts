@@ -7,21 +7,141 @@ export type ParseResult =
   | { ok: true; block: CvEdits }
   | { ok: false; errors: string[] }
 
-/**
- * Find the LAST ```cv-edits fenced block in a Markdown document,
- * parse its JSON and validate it. Returns friendly errors on failure.
- */
-export function parseCvEditsMarkdown(markdown: string): ParseResult {
+// LLMs are inconsistent about the exact shape of the block. Rather than reject
+// a set of edits over a stringified version number or a synonym like "add",
+// we normalize a handful of common, unambiguous variations to the canonical
+// form before validating. Anything we can't confidently map is left untouched
+// so the schema still reports it.
+
+/** Coerce "1", "1.0", "v1", 1.0 … to the number 1; leave anything else alone. */
+function normalizeVersion(v: unknown): unknown {
+  if (typeof v === 'number' && v === 1) return 1
+  if (typeof v === 'string') {
+    const s = v.trim().replace(/^v/i, '')
+    if (s !== '' && Number(s) === 1) return 1
+  }
+  return v
+}
+
+function lastPointerToken(path: unknown): string | null {
+  if (typeof path !== 'string' || !path.startsWith('/')) return null
+  const parts = path.split('/')
+  return parts[parts.length - 1] ?? null
+}
+
+/** Map common op synonyms to the five canonical ops. */
+function normalizeOp(rawOp: unknown, path: unknown): unknown {
+  if (typeof rawOp !== 'string') return rawOp
+  switch (rawOp.trim().toLowerCase()) {
+    case 'set':
+    case 'replace':
+    case 'insert':
+    case 'remove':
+    case 'move':
+      return rawOp.trim().toLowerCase()
+    case 'delete':
+    case 'del':
+      return 'remove'
+    case 'update':
+    case 'change':
+    case 'modify':
+    case 'edit':
+      return 'set'
+    case 'append':
+    case 'prepend':
+    case 'push':
+      return 'insert'
+    case 'add': {
+      // JSON-Patch "add": into an array (numeric or "-" last token) it means
+      // insert; onto an object key it means set.
+      const t = lastPointerToken(path)
+      return t !== null && (t === '-' || /^\d+$/.test(t)) ? 'insert' : 'set'
+    }
+    default:
+      return rawOp
+  }
+}
+
+/** Read a value from a nested object/array by a Zod issue path. */
+function readByKeys(root: unknown, keys: (string | number)[]): unknown {
+  let cur: unknown = root
+  for (const key of keys) {
+    if (cur === null || typeof cur !== 'object') return undefined
+    cur = (cur as Record<string | number, unknown>)[key]
+  }
+  return cur
+}
+
+/** Best-effort normalization of a parsed cv-edits object before validation. */
+function normalizeCvEdits(input: unknown): unknown {
+  if (input === null || typeof input !== 'object') return input
+  const obj = { ...(input as Record<string, unknown>) }
+  if ('version' in obj) obj.version = normalizeVersion(obj.version)
+  if (Array.isArray(obj.edits)) {
+    obj.edits = obj.edits.map((e) => {
+      if (e === null || typeof e !== 'object') return e
+      const edit = { ...(e as Record<string, unknown>) }
+      if ('op' in edit) edit.op = normalizeOp(edit.op, edit.path)
+      return edit
+    })
+  }
+  return obj
+}
+
+/** The LAST ```cv-edits fenced block, if any — the explicit contract. */
+function lastCvEditsFence(markdown: string): string | null {
   const fenceRe = /```cv-edits[^\S\n]*\n([\s\S]*?)```/g
   let match: RegExpExecArray | null
   let last: string | null = null
   while ((match = fenceRe.exec(markdown)) !== null) last = match[1]
+  return last
+}
+
+/** Does this text parse to an object carrying an `edits` array? */
+function looksLikeCvEdits(text: string): boolean {
+  try {
+    const o = JSON.parse(text) as { edits?: unknown }
+    return o !== null && typeof o === 'object' && Array.isArray(o.edits)
+  } catch {
+    return false
+  }
+}
+
+/**
+ * When there's no explicit cv-edits fence, be forgiving: accept the JSON from
+ * any fenced block that carries an `edits` array, or a bare JSON object pasted
+ * on its own. The last qualifying candidate wins.
+ */
+function fallbackCvEditsJson(markdown: string): string | null {
+  const fenceRe = /```[^\n]*\n([\s\S]*?)```/g
+  let match: RegExpExecArray | null
+  let found: string | null = null
+  while ((match = fenceRe.exec(markdown)) !== null) {
+    if (looksLikeCvEdits(match[1])) found = match[1]
+  }
+  if (found !== null) return found
+  const first = markdown.indexOf('{')
+  const last = markdown.lastIndexOf('}')
+  if (first >= 0 && last > first) {
+    const sub = markdown.slice(first, last + 1)
+    if (looksLikeCvEdits(sub)) return sub
+  }
+  return null
+}
+
+/**
+ * Locate the cv-edits data in an LLM reply, parse its JSON and validate it.
+ * Prefers an explicit ```cv-edits fence; falls back to any block (or bare
+ * JSON) containing an `edits` array. Returns friendly errors on failure.
+ */
+export function parseCvEditsMarkdown(markdown: string): ParseResult {
+  const last = lastCvEditsFence(markdown) ?? fallbackCvEditsJson(markdown)
   if (last === null) {
     return {
       ok: false,
       errors: [
-        'No ```cv-edits fenced code block found in this document.',
-        'Make sure the LLM reply ends with a code block labeled cv-edits (see the Prompt Pack in the README).',
+        'No cv-edits data found in this document.',
+        'Paste the LLM reply that ends with a ```cv-edits code block, or the cv-edits JSON on its own (see the Prompt Pack above).',
       ],
     }
   }
@@ -36,13 +156,21 @@ export function parseCvEditsMarkdown(markdown: string): ParseResult {
       ],
     }
   }
-  const result = CvEditsSchema.safeParse(json)
+  const normalized = normalizeCvEdits(json)
+  const result = CvEditsSchema.safeParse(normalized)
   if (!result.success) {
     return {
       ok: false,
-      errors: result.error.issues.map(
-        (i) => `${i.path.length ? i.path.join('.') : '(root)'}: ${i.message}`,
-      ),
+      errors: result.error.issues.map((i) => {
+        const where = i.path.length ? i.path.join('.') : '(root)'
+        // Surface the offending op value — the raw zod discriminator message
+        // ("Invalid discriminator value…") doesn't say what was actually there.
+        if (i.path.length >= 2 && i.path[i.path.length - 1] === 'op') {
+          const val = readByKeys(normalized, i.path)
+          return `${where}: ${JSON.stringify(val)} is not a valid op — use one of set, replace, insert, remove, move`
+        }
+        return `${where}: ${i.message}`
+      }),
     }
   }
   return { ok: true, block: result.data }

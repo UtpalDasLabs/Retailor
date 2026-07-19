@@ -147,8 +147,9 @@ export function ImportView({
           <strong>Drop a Markdown file</strong> from any LLM session here
         </p>
         <p className="hint">
-          The file must end with a <code>```cv-edits</code> fenced block — see the Prompt
-          Pack in the README. Everything is parsed locally.
+          Ideally the file ends with a <code>```cv-edits</code> fenced block (see the Prompt
+          Pack above), but the raw <code>cv-edits</code> JSON on its own works too. Everything
+          is parsed locally.
         </p>
         <p>
           <label className="btn btn-sm" style={{ cursor: 'pointer' }}>
