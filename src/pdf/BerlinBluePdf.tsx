@@ -147,6 +147,12 @@ const s = StyleSheet.create({
   liText: { fontSize: 9.6, lineHeight: 1.55, flex: 1 },
 })
 
+// Keep a section heading with what follows: react-pdf pushes the heading to the
+// next page unless at least this many points remain below it (enough for its
+// first item), so headings never sit orphaned at the bottom of a column.
+const KEEP_SIDE = 34
+const KEEP_MAIN = 48
+
 function joined(parts: Array<string | undefined>, sep: string): string {
   return parts.filter((p) => p && String(p).trim()).join(sep)
 }
@@ -195,7 +201,9 @@ function Sidebar({ resume }: { resume: Resume }) {
         )}
       </View>
 
-      <Text style={s.sideH}>About me</Text>
+      <Text style={s.sideH} minPresenceAhead={KEEP_SIDE}>
+        About me
+      </Text>
       {about.map((line, i) => (
         <View style={s.aboutRow} key={i} wrap={false}>
           <Text style={s.aboutMarker}>•</Text>
@@ -207,7 +215,9 @@ function Sidebar({ resume }: { resume: Resume }) {
 
       {(resume.x_advisory ?? []).length > 0 && (
         <>
-          <Text style={s.sideH}>Advisory</Text>
+          <Text style={s.sideH} minPresenceAhead={KEEP_SIDE}>
+            Advisory
+          </Text>
           {(resume.x_advisory ?? []).map((a, i) => (
             <Text style={s.advisory} key={i} wrap={false}>
               {joined([a.role, a.organization], ', ')}
@@ -270,7 +280,9 @@ function SideList({
   if (list.length === 0) return null
   return (
     <>
-      <Text style={s.sideH}>{title}</Text>
+      <Text style={s.sideH} minPresenceAhead={KEEP_SIDE}>
+        {title}
+      </Text>
       {list.map((it, i) =>
         variant === 'bullet' ? (
           <View style={s.sideLi} key={i} wrap={false}>
@@ -304,7 +316,9 @@ function Main({ resume }: { resume: Resume }) {
 
       {summary.length > 0 && (
         <>
-          <Text style={s.mainH}>Summary</Text>
+          <Text style={s.mainH} minPresenceAhead={KEEP_MAIN}>
+            Summary
+          </Text>
           {summary.map((p, i) => (
             <Text style={s.para} key={i}>
               {p}
@@ -315,7 +329,9 @@ function Main({ resume }: { resume: Resume }) {
 
       {highlights.length > 0 && (
         <>
-          <Text style={s.subhead}>Highlights</Text>
+          <Text style={s.subhead} minPresenceAhead={KEEP_MAIN}>
+            Highlights
+          </Text>
           {highlights.map((h, i) => (
             <View style={s.hlRow} key={i}>
               <Text style={s.hlDot}>•</Text>
@@ -327,7 +343,9 @@ function Main({ resume }: { resume: Resume }) {
 
       {work.length > 0 && (
         <>
-          <Text style={s.mainH}>Work experience</Text>
+          <Text style={s.mainH} minPresenceAhead={KEEP_MAIN}>
+            Work experience
+          </Text>
           {work.map((w, i) => (
             <View key={i}>
               <View wrap={false}>
