@@ -1,109 +1,60 @@
 # Retailor
 
-**Open-source, LLM-agnostic CV tailoring — entirely in your browser.**
+**Tailor your CV to any job with the AI you already use — and download a beautifully designed PDF. Everything happens in your browser.**
 
-Retailor lets you keep your CV as structured data (JSON Resume + extensions), apply tailoring feedback from **any** LLM session as a reviewable set of edits, preview the result in a pixel-faithful A4 template, and save a print-perfect PDF. There is no backend, no account, and no upload.
+Retailor walks you through four simple steps: put your CV in, copy a ready-made message into any AI chatbot together with the job advert, paste the AI's reply back, then review the suggested changes and download a polished PDF. There is no sign-up, no app to install, and nothing is ever uploaded.
 
-## Privacy statement
+## What is this?
 
-- **All processing is local.** Retailor is a 100% static, client-side app. Your CV data, photo, and (in future) API keys live in your browser's `localStorage` only and never leave it.
-- **No network calls at runtime.** Fonts are self-hosted; there are no analytics, trackers, or API requests. Verify it yourself in the browser's network tab.
-- The repository ships only a **fictional sample persona** ("Robin Fields"), and the editor **starts empty** so your data is never pre-filled. Keep your real data in `*.private.json` files or a `private/` folder — both are gitignored.
+Job hunting means rewriting your CV for every role. Retailor lets **any** AI assistant (ChatGPT, Claude, Gemini, Perplexity — whatever you already use) do the tailoring, then turns the result into a clean, professional PDF. You stay in control: you see every change the AI suggests and decide what to keep.
 
-## Quick start
+## Is my data safe?
+
+Yes. Retailor runs entirely in your web browser.
+
+- **Nothing is uploaded to Retailor.** Your CV, your photo, and your edits stay on your device (in your browser's local storage). There is no server, no account, and no database.
+- **No tracking.** No analytics, no advertising, no third-party requests. You can check this yourself in your browser's Network tab.
+- When you go to **step 2**, you choose to paste your CV into your AI provider (ChatGPT, etc.). That part is between you and them — the same as if you'd typed it into their chat yourself. Retailor never sends it anywhere.
+
+## The four steps
+
+1. **Your CV** — start from the built-in example, load a CV file you saved before, or type your details into a simple form. Add a photo if you like (it stays on your device).
+2. **Ask your AI** — tap **Copy prompt**. Paste it into your AI chatbot along with the job advert, and send. The prompt tells the AI to act as a hiring manager, assess your fit honestly, and return your complete tailored CV — without inventing anything.
+3. **Paste the reply** — copy the AI's whole answer and paste it back into Retailor. It reads the reply and works out exactly what changed.
+4. **Review & download** — see each suggested change side by side (what you have now vs. what the AI suggests), keep or drop each one, preview the finished CV, and **download your PDF**. You can also save your updated CV as a file for next time.
+
+> A reminder shown in the app: AIs sometimes exaggerate. Always check the changes — you are responsible for what your CV claims.
+
+## For developers
+
+Retailor is a fully static Vite + React + TypeScript app.
 
 ```bash
 npm install
-npm run dev        # local dev server
-npm run build      # static production build in dist/
+npm run dev      # local dev server
+npm test         # parser / merge / diff test suite (Vitest)
+npm run build    # static production build in dist/
 ```
 
-Open the app, then:
+### How it works under the hood
 
-1. **Load your CV** — the editor starts blank. Type your details in the **Editor** tab, or `Import JSON` (JSON Resume schema, see below) to load a file you saved before, or `Load sample` to explore the fictional example. Every tab has a plain-English "How to use this" panel. A photo is optional and stays in localStorage. Want a clean slate? The **Clear all** button at the top of the Editor wipes every field back to empty (with a confirmation prompt).
-2. **Get tailoring feedback** — paste the Prompt Pack into any LLM chat along with your resume JSON and a job description. The Prompt Pack is available right in the **Import Feedback** tab with a one-click **Copy** button (and reproduced below). Save the reply as a Markdown file.
-3. **Import Feedback** — drop the Markdown file (or paste the reply). Retailor finds the last ` ```cv-edits ` block, validates it, and shows every proposed edit with before/after and the model's reasoning. Accept or reject each one.
-4. **Preview & download** — the A4 preview updates instantly. `Download PDF` uses the browser print pipeline: choose *Save as PDF*, margins *None*, *Background graphics* on. The output is vector, with selectable text.
-5. **Export JSON** — keep your updated master file (it downloads as `*.private.json`, which git ignores).
+- **PDF generation** uses [`@react-pdf/renderer`](https://react-pdf.org/): the CV template is defined once as React components and rendered to a real PDF blob. The on-screen preview is that same blob rendered to canvases with **pdf.js** (`react-pdf`), so what you preview is exactly what you download. There is no `window.print()` — the download saves the blob directly (with a native share-sheet fallback for iOS Safari).
+- **Reply parsing** (`src/parse/`) is built to survive messy, real-world LLM output. It scans every fenced and bare JSON block, parses leniently (tolerating trailing commas, comments, and smart quotes), and picks the last block that looks like a resume. That reply is deep-merged onto your current CV (unknown fields preserved, anything the AI omitted is kept from your data), and the difference is shown as a section-aware, toggleable diff. A legacy `cv-edits` block is still accepted for back-compatibility, with forgiving op-name synonyms. If the AI renames you, that change is flagged and left off by default.
+- **Everything is local.** State lives in `localStorage` (versioned, with automatic migration from the previous version). Fonts are bundled; there are no runtime network calls to third parties.
 
-## The `cv-edits` block
+### Fonts, templates, privacy
 
-Any LLM can tailor your CV by ending its reply with a fenced block labeled `cv-edits`:
+- Fonts: **Source Sans 3** and **Source Serif 4**, used under the SIL Open Font License 1.1. UI fonts are bundled as WOFF2; the PDF embeds TrueType subsets.
+- Templates live in `src/pdf/` and register in `src/pdf/registry.ts` — adding one is a component plus a registry entry. The first template, **berlin-blue**, is a two-column A4 design (navy sidebar, serif display name) that flows cleanly to as many pages as the content needs.
+- The repository ships only a **fictional sample persona** ("Robin Fields"). Keep your real CV out of git — exported files are named `*.private.json` and, like a `private/` folder, are gitignored.
 
-````markdown
-```cv-edits
-{
-  "version": 1,
-  "targetRole": "VP Product — Consumer Services",
-  "rationale": "One-line summary of the tailoring strategy",
-  "edits": [
-    { "op": "set",     "path": "/basics/label", "value": "…", "why": "…" },
-    { "op": "replace", "path": "/work/1/highlights/0", "value": "…", "why": "…" },
-    { "op": "insert",  "path": "/work/0/highlights/2", "value": "…", "why": "…" },
-    { "op": "remove",  "path": "/x_portfolio/5", "why": "…" },
-    { "op": "move",    "from": "/work/3", "path": "/work/4", "why": "…" }
-  ]
-}
-```
-````
+### Deploying to GitHub Pages
 
-- Ops: `set` (replace the value at a path), `replace` (alias of `set`), `insert` (into an array at an index), `remove`, `move`.
-- Paths are [JSON Pointers](https://datatracker.ietf.org/doc/html/rfc6901) into the resume object; arrays are zero-indexed.
-- Edits apply sequentially. If one path fails to resolve it is marked as failed in the review screen and the rest continue.
-- Retailor always uses the **last** `cv-edits` block in the document, so the model can think out loud above it.
+The included workflow (`.github/workflows/deploy.yml`) runs the tests, builds the app, and publishes it to GitHub Pages on every push to `main`. One-time setup: in the repository settings, set **Pages → Source → GitHub Actions**. The app is served at `https://<owner>.github.io/Retailor/` (the Vite `base` is `/Retailor/`; adjust it if you rename or fork the repo).
 
-See `src/data/example-feedback.md` for a complete example (also available in-app via *Try the bundled example*).
+## Disclaimer
 
-## Prompt Pack
-
-The **Import Feedback** tab shows this text with a **Copy** button, so you usually don't need to leave the app. It's reproduced here for reference — append it to any LLM chat / project instructions:
-
-> After your assessment, always end your reply with a fenced code block labeled `cv-edits` containing JSON with `version` set to the number 1 (not the string "1.0"), `targetRole`, `rationale`, and an `edits` array of `{op, path, value, why}` operations against my resume JSON (JSON Resume schema, arrays zero-indexed, paths as JSON Pointers). Each `op` must be exactly one of: set, replace, insert, remove, move (use "insert" to add an array item and "remove" to delete one). Propose 5–15 surgical edits; never invent facts not present in my CV.
-
-Retailor is forgiving of common LLM slips: a stringified version (`"1.0"`), extra whitespace, and op synonyms (`add`, `delete`, `update`, `append`) are normalized automatically on import. Anything it can't safely interpret is shown as a clear, per-edit error.
-
-Then paste your resume JSON (export it from Retailor) and the job description, and ask for tailoring advice.
-
-## Data model
-
-Base: [JSON Resume](https://jsonresume.org/schema/) (`basics`, `work`, `education`, `certificates`, `awards`, `languages`) plus optional extensions:
-
-| Field | Type | Rendered as |
-| --- | --- | --- |
-| `basics.summary` | `string[]` | Summary paragraphs |
-| `basics.x_highlights` | `string[]` | "Highlights" bullets |
-| `basics.x_birthDate`, `basics.x_residency` | `string` | About-me rows |
-| `basics.picture` | data-URL string \| null | Sidebar photo |
-| `x_coreCompetence` | `string[]` | Core competence |
-| `x_advisory` | `{role, organization, startDate, endDate}[]` | Advisory |
-| `x_portfolio` | `string[]` | Product portfolio |
-| `x_memberships` | `{organization, since}[]` | Active membership |
-| `meta.template` | template id | Selected template |
-
-Unknown fields are preserved through import → edit → export.
-
-## Templates
-
-Templates live in `src/templates/<id>/` and register in `src/templates/registry.ts` — adding a template is one folder plus one registry entry. The first template, **berlin-blue**, is a two-column A4 design (navy sidebar, serif display name) that reflows and repaginates cleanly as content grows or shrinks.
-
-## Loading a private resume file
-
-Keep your real CV out of git:
-
-1. Export from Retailor → the file is named `<your-name>.private.json` (gitignored, as is any `private/` folder).
-2. To load it later: `Import JSON` in the app header. Data persists in that browser's localStorage until you clear it.
-
-## Deploying to GitHub Pages
-
-The included GitHub Actions workflow (`.github/workflows/deploy.yml`) builds the app and publishes it to GitHub Pages on every push to `main`. One-time setup: in the repository settings, set **Pages → Source → GitHub Actions**. The app is served at `https://<owner>.github.io/Retailor/` (the Vite `base` is set to `/Retailor/`; adjust it if you rename or fork the repo).
-
-## v2: bring-your-own-key LLM layer
-
-`src/llm/provider.ts` defines the `LLMProvider` interface with adapter skeletons for Anthropic, OpenAI, Google, and OpenRouter. In v2 the app will call your chosen provider directly from the browser with your own API key (stored in localStorage only). v1 intentionally makes **no** network calls.
-
-## Disclaimer of liability
-
-Retailor is provided "as is", without warranty of any kind. You are responsible for the accuracy of your CV and for verifying every edit an LLM proposes — models can and do make things up. Nothing in this tool constitutes career or legal advice.
+Retailor is provided "as is", without warranty of any kind. You are responsible for the accuracy of your CV and for verifying every change an AI proposes — models can and do make things up. Nothing here is career or legal advice.
 
 ## License
 
