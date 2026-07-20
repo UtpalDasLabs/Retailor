@@ -270,13 +270,43 @@ button:focus-visible {
 /* option cards */
 .cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 14px;
 }
 @media (max-width: 720px) {
   .cards {
     grid-template-columns: 1fr;
   }
+}
+.import-note {
+  background: var(--accent-soft);
+  border: 1px solid #ccdcf0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  font-size: 15px;
+}
+.ai-panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 12px;
+}
+.ai-panel p {
+  margin-bottom: 6px;
+}
+.ai-actions {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.ai-panel .jobad-textarea {
+  min-height: 150px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 13px;
 }
 .opt-card {
   background: var(--card);

@@ -18,7 +18,7 @@ Yes. Retailor runs entirely in your web browser.
 
 ## The four steps
 
-1. **Your CV** — start from the built-in example, load a CV file you saved before, or type your details into a simple form. Add a photo if you like (it stays on your device).
+1. **Your CV** — start from the built-in example, import an existing CV (**PDF or Word**, read entirely in your browser), load a CV file you saved before, or type your details into a simple form. Add a photo if you like (it stays on your device).
 2. **Ask your AI** — tap **Copy prompt**. Paste it into your AI chatbot along with the job advert, and send. The prompt tells the AI to act as a hiring manager, assess your fit honestly, and return your complete tailored CV — without inventing anything.
 3. **Paste the reply** — copy the AI's whole answer and paste it back into Retailor. It reads the reply and works out exactly what changed.
 4. **Review & download** — see each suggested change side by side (what you have now vs. what the AI suggests), keep or drop each one, preview the finished CV, and **download your PDF**. You can also save your updated CV as a file for next time.
@@ -40,6 +40,7 @@ npm run build    # static production build in dist/
 
 - **PDF generation** uses [`@react-pdf/renderer`](https://react-pdf.org/): the CV template is defined once as React components and rendered to a real PDF blob. The on-screen preview is that same blob rendered to canvases with **pdf.js** (`react-pdf`), so what you preview is exactly what you download. There is no `window.print()` — the download saves the blob directly (with a native share-sheet fallback for iOS Safari).
 - **Reply parsing** (`src/parse/`) is built to survive messy, real-world LLM output. It scans every fenced and bare JSON block, parses leniently (tolerating trailing commas, comments, and smart quotes), and picks the last block that looks like a resume. That reply is deep-merged onto your current CV (unknown fields preserved, anything the AI omitted is kept from your data), and the difference is shown as a section-aware, toggleable diff. A legacy `cv-edits` block is still accepted for back-compatibility, with forgiving op-name synonyms. If the AI renames you, that change is flagged and left off by default.
+- **Importing a PDF/Word CV** (`src/import/`) happens entirely in the browser: text is extracted with the bundled pdf.js worker (same-origin — no CDN) or `mammoth` for DOCX, then a conservative heuristic pre-fills the fields it's confident about (name, contact details, headline, summary) and leaves the rest for you. For a cleaner structured result there's an optional AI path: the extracted text is turned into a copy-paste prompt, and the AI's JSON reply flows back through the same parser. No file is ever uploaded.
 - **Everything is local.** State lives in `localStorage` (versioned, with automatic migration from the previous version). Fonts are bundled; there are no runtime network calls to third parties.
 
 ### Fonts, templates, privacy
