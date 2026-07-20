@@ -35,6 +35,7 @@ export function App() {
   const [step, setStep] = useState(1)
   const [maxReached, setMaxReached] = useState(1)
   const [reply, setReply] = useState('')
+  const [jobAd, setJobAd] = useState('')
   const [changes, setChanges] = useState<Change[]>([])
   const [warnings, setWarnings] = useState<string[]>([])
   const [accepted, setAccepted] = useState<Set<string>>(new Set())
@@ -55,6 +56,7 @@ export function App() {
     const s = loadSession()
     if (!s) return
     setReply(s.reply ?? '')
+    setJobAd(s.jobAd ?? '')
     const base = loadResume() ?? emptyResume()
     if (s.step === 4 && s.reply) {
       const res = parseReply(s.reply, base)
@@ -76,8 +78,8 @@ export function App() {
   }, [resume])
 
   useEffect(() => {
-    saveSession({ step, reply })
-  }, [step, reply])
+    saveSession({ step, reply, jobAd })
+  }, [step, reply, jobAd])
 
   const goTo = (n: number) => {
     setStep(n)
@@ -155,6 +157,7 @@ export function App() {
                     clearResume()
                     setResume(emptyResume())
                     setReply('')
+                    setJobAd('')
                     setChanges([])
                     setAccepted(new Set())
                     setStep(1)
@@ -212,7 +215,15 @@ export function App() {
             onContinue={() => goTo(2)}
           />
         )}
-        {step === 2 && <Step2Ask resume={resume} onToast={showToast} onContinue={() => goTo(3)} />}
+        {step === 2 && (
+          <Step2Ask
+            resume={resume}
+            jobAd={jobAd}
+            onJobAdChange={setJobAd}
+            onToast={showToast}
+            onContinue={() => goTo(3)}
+          />
+        )}
         {step === 3 && (
           <Step3Paste
             reply={reply}
@@ -240,6 +251,7 @@ export function App() {
               onStartAnother={(applied) => {
                 setResume(applied)
                 setReply('')
+                setJobAd('')
                 setChanges([])
                 setWarnings([])
                 setAccepted(new Set())

@@ -14,15 +14,26 @@ const industryHint = (resume: Resume): string => {
   return label ? ` (their background: ${label})` : ''
 }
 
-/** The prompt the user pastes into ChatGPT/Claude/Gemini/Perplexity. */
-export function buildPrompt(resume: Resume): string {
+export const JOB_AD_PLACEHOLDER = '[PASTE THE JOB AD BELOW]'
+
+/**
+ * The prompt the user pastes into ChatGPT/Claude/Gemini/Perplexity. When a job
+ * ad is supplied it's embedded inline so the message is complete (one paste);
+ * otherwise the placeholder line is kept for the user to fill in their AI.
+ */
+export function buildPrompt(resume: Resume, jobAd?: string): string {
   // Strip the in-browser-only photo data URL — it's huge and irrelevant to the AI.
   const forAi = structuredClone(resume) as Resume
   if (forAi.basics) delete forAi.basics.picture
   const cvJson = JSON.stringify(forAi, null, 2)
 
+  const ad = (jobAd ?? '').trim()
+  const jobAdBlock = ad
+    ? ['Here is the job ad:', '', ad]
+    : [`Here is the job ad: ${JOB_AD_PLACEHOLDER}`]
+
   return [
-    `You are a senior hiring manager in the candidate's industry${industryHint(resume)}. Assess how well this candidate fits the job ad I will paste at the end, and be honest about gaps — don't flatter.`,
+    `You are a senior hiring manager in the candidate's industry${industryHint(resume)}. Assess how well this candidate fits the job ad below, and be honest about gaps — don't flatter.`,
     '',
     'Here is my current CV as JSON:',
     '```json',
@@ -31,6 +42,6 @@ export function buildPrompt(resume: Resume): string {
     '',
     OUTPUT_CONTRACT,
     '',
-    'Here is the job ad: [PASTE THE JOB AD BELOW]',
+    ...jobAdBlock,
   ].join('\n')
 }
