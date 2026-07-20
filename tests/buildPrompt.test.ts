@@ -24,4 +24,25 @@ describe('buildPrompt', () => {
     const p = buildPrompt(withPhoto)
     expect(p).not.toContain('base64')
   })
+
+  it('keeps the placeholder when no job ad is given', () => {
+    const p = buildPrompt(resume)
+    expect(p).toContain('[PASTE THE JOB AD BELOW]')
+    expect(p.trimEnd().endsWith('[PASTE THE JOB AD BELOW]')).toBe(true)
+  })
+
+  it('embeds the job ad inline (and drops the placeholder) when provided', () => {
+    const ad = 'Senior PM wanted. Must own mobile subscription growth.'
+    const p = buildPrompt(resume, ad)
+    expect(p).not.toContain('[PASTE THE JOB AD BELOW]')
+    expect(p).toContain(ad)
+    // The CV JSON comes before the job ad; the ad is at the very end.
+    expect(p.indexOf('"name": "Robin Fields"')).toBeLessThan(p.indexOf(ad))
+    expect(p.trimEnd().endsWith(ad)).toBe(true)
+  })
+
+  it('ignores a whitespace-only job ad', () => {
+    const p = buildPrompt(resume, '   \n  ')
+    expect(p).toContain('[PASTE THE JOB AD BELOW]')
+  })
 })

@@ -41,6 +41,7 @@ export function clearResume(): void {
 export interface Session {
   step: number
   reply: string
+  jobAd?: string
 }
 
 export function loadSession(): Session | null {

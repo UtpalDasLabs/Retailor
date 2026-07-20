@@ -422,6 +422,19 @@ button:focus-visible {
   width: 70%;
 }
 
+.jobad-textarea {
+  width: 100%;
+  min-height: 120px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  font: inherit;
+  resize: vertical;
+  background: #fff;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
 /* how-to + prompt */
 .howto {
   padding-left: 22px;

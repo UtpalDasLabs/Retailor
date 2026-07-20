@@ -4,15 +4,20 @@ import { buildPrompt } from '../prompt/buildPrompt'
 
 export function Step2Ask({
   resume,
+  jobAd,
+  onJobAdChange,
   onToast,
   onContinue,
 }: {
   resume: Resume
+  jobAd: string
+  onJobAdChange: (v: string) => void
   onToast: (msg: string) => void
   onContinue: () => void
 }) {
   const [copied, setCopied] = useState(false)
-  const prompt = buildPrompt(resume)
+  const prompt = buildPrompt(resume, jobAd)
+  const hasJobAd = jobAd.trim().length > 0
   const canShare = typeof navigator !== 'undefined' && !!navigator.share
 
   const copy = async () => {
@@ -38,8 +43,24 @@ export function Step2Ask({
     <div className="step">
       <h1 className="step-title">Step 2 — Ask your AI</h1>
       <p className="step-lead">
-        Copy this message, paste it into ChatGPT, Claude, Gemini, Perplexity — any AI you use —
-        together with the job ad.
+        Paste the job advert below, then copy the message and drop it into ChatGPT, Claude, Gemini,
+        Perplexity — any AI you use.
+      </p>
+
+      <label className="field-label" htmlFor="job-ad">
+        Job advert (optional, but recommended)
+      </label>
+      <textarea
+        id="job-ad"
+        className="jobad-textarea"
+        value={jobAd}
+        placeholder="Paste the job description here so the copied message is ready to send…"
+        onChange={(e) => onJobAdChange(e.target.value)}
+      />
+      <p className="hint" style={{ marginBottom: 14 }}>
+        {hasJobAd
+          ? 'Nice — the job ad is now baked into the message below, so you only paste once.'
+          : 'Leave this empty and the message will include a “paste the job ad” placeholder instead.'}
       </p>
 
       <div className="copybar">
@@ -56,9 +77,11 @@ export function Step2Ask({
       <ol className="howto">
         <li>Open your AI app or website.</li>
         <li>Paste the message you just copied.</li>
-        <li>
-          Where it says <code>[PASTE THE JOB AD BELOW]</code>, paste the job advert.
-        </li>
+        {hasJobAd ? null : (
+          <li>
+            Where it says <code>[PASTE THE JOB AD BELOW]</code>, paste the job advert.
+          </li>
+        )}
         <li>Send it.</li>
         <li>Copy the AI’s whole reply, then come back and go to step 3.</li>
       </ol>
