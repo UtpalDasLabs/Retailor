@@ -13,13 +13,19 @@ export type ParseResult =
 // form before validating. Anything we can't confidently map is left untouched
 // so the schema still reports it.
 
-/** Coerce "1", "1.0", "v1", 1.0 … to the number 1; leave anything else alone. */
+/**
+ * Coerce any major-version-1 value ("1", "1.0", "1.1", "v1", 1.0 …) to the
+ * number 1. There is only one cv-edits format, so a minor-version bump the
+ * model invents shouldn't block the import. Anything else is left alone.
+ */
 function normalizeVersion(v: unknown): unknown {
-  if (typeof v === 'number' && v === 1) return 1
-  if (typeof v === 'string') {
+  let n: number | null = null
+  if (typeof v === 'number') n = v
+  else if (typeof v === 'string') {
     const s = v.trim().replace(/^v/i, '')
-    if (s !== '' && Number(s) === 1) return 1
+    if (s !== '' && !Number.isNaN(Number(s))) n = Number(s)
   }
+  if (n !== null && Number.isFinite(n) && Math.floor(n) === 1) return 1
   return v
 }
 
@@ -297,9 +303,18 @@ export function applyEdits(resume: Resume, edits: CvEdit[]): ApplyOutcome {
     try {
       switch (edit.op) {
         case 'set':
-        case 'replace':
-          setAt(doc, edit.path, structuredClone(edit.value))
+        case 'replace': {
+          // Models often replace a whole list field (summary, highlights, …)
+          // with a single string. Keep the array shape so downstream rendering
+          // (which iterates these fields) doesn't break on a bare scalar.
+          const current = getAtPointer(doc, edit.path)
+          const value =
+            Array.isArray(current) && !Array.isArray(edit.value)
+              ? [structuredClone(edit.value)]
+              : structuredClone(edit.value)
+          setAt(doc, edit.path, value)
           break
+        }
         case 'insert':
           insertAt(doc, edit.path, structuredClone(edit.value))
           break
