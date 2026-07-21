@@ -231,6 +231,11 @@ export function App() {
             base={resume}
             onGoStep2={() => goTo(2)}
             onToast={showToast}
+            onClear={() => {
+              setChanges([])
+              setWarnings([])
+              setAccepted(new Set())
+            }}
             onParsed={(res) => {
               setChanges(res.changes)
               setWarnings(res.warnings)
@@ -248,14 +253,25 @@ export function App() {
               accepted={accepted}
               setAccepted={setAccepted}
               onToast={showToast}
-              onStartAnother={(applied) => {
-                setResume(applied)
+              onAnotherJob={() => {
+                // Non-destructive: keep the master CV, drop this job's overlay.
                 setReply('')
                 setJobAd('')
                 setChanges([])
                 setWarnings([])
                 setAccepted(new Set())
                 goTo(2)
+              }}
+              onCommitToCv={(applied) => {
+                // Opt-in: fold the accepted edits into the master CV.
+                setResume(applied)
+                setReply('')
+                setJobAd('')
+                setChanges([])
+                setWarnings([])
+                setAccepted(new Set())
+                showToast('These edits are now part of your saved CV.')
+                goTo(1)
               }}
             />
           </Suspense>
