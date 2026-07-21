@@ -120,29 +120,37 @@ export function downloadBlob(blob: Blob, filename: string): void {
 /**
  * Save the generated PDF. On iOS Safari the `download` attribute is unreliable,
  * so prefer the native share sheet (Save to Files / share) when the browser can
- * share files; fall back to a normal download elsewhere. Returns false only if
- * the user explicitly cancels the share sheet.
+ * share files; fall back to a normal download elsewhere.
+ *
+ * The share payload is ONLY `{ files: [file] }` — passing a `title`/`text`
+ * alongside the file made iOS bundle it as a second item, so the Save-to-Files
+ * sheet offered "2 items". We also never fall through to a download once the
+ * share sheet has been presented, which would save the PDF twice.
+ * Returns false only if the user cancels the share sheet.
  */
 export async function savePdf(blob: Blob, filename: string): Promise<boolean> {
   const nav = navigator as Navigator & {
     canShare?: (data?: unknown) => boolean
     share?: (data?: unknown) => Promise<void>
   }
+  let file: File | null = null
   try {
-    const file = new File([blob], filename, { type: 'application/pdf' })
-    if (nav.canShare?.({ files: [file] }) && nav.share) {
-      try {
-        await nav.share({ files: [file], title: filename })
-        return true
-      } catch (e) {
-        // User dismissed the sheet — don't also trigger a download.
-        if (e instanceof DOMException && e.name === 'AbortError') return false
-        // Any other error: fall through to the download path.
-      }
-    }
+    file = new File([blob], filename, { type: 'application/pdf' })
   } catch {
-    // File constructor unsupported — fall through to the download path.
+    file = null // File constructor unsupported — use the download path.
   }
+
+  if (file && nav.canShare?.({ files: [file] }) && nav.share) {
+    try {
+      await nav.share({ files: [file] })
+    } catch {
+      // Cancelled or failed after the sheet was shown — do not also download,
+      // or the file would be saved twice.
+      return false
+    }
+    return true
+  }
+
   downloadBlob(blob, filename)
   return true
 }

@@ -12,6 +12,7 @@ const SCHEMA_HINT = `{
   "certificates": [ { "name": "", "issuer": "", "date": "" } ],
   "awards": [ { "title": "", "awarder": "" } ],
   "languages": [ { "language": "", "fluency": "" } ],
+  "skills": [ { "name": "", "keywords": ["..."] } ],
   "x_coreCompetence": ["skill"], "x_portfolio": ["item"],
   "x_memberships": [ { "organization": "", "since": "" } ]
 }`

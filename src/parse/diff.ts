@@ -88,6 +88,18 @@ function objList(fields: string[]) {
   return (v: unknown) => fmtObjectList(v, fields)
 }
 
+function fmtSkills(v: unknown): string {
+  if (!Array.isArray(v)) return String(v ?? '')
+  return v
+    .map((item) => {
+      if (item === null || typeof item !== 'object') return `• ${String(item ?? '')}`
+      const o = item as Record<string, unknown>
+      const kw = Array.isArray(o.keywords) ? o.keywords.join(', ') : ''
+      return '• ' + line(o.name as string, kw)
+    })
+    .join('\n')
+}
+
 function topSections(): Section[] {
   return [
     { path: ['basics', 'label'], section: 'Role title', label: 'Headline', format: scalar },
@@ -100,6 +112,12 @@ function topSections(): Section[] {
       section: 'Advisory',
       label: 'Advisory roles',
       format: objList(['role', 'organization', 'startDate', 'endDate']),
+    },
+    {
+      path: ['skills'],
+      section: 'Skills',
+      label: 'Skills',
+      format: fmtSkills,
     },
     {
       path: ['languages'],

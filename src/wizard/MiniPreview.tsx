@@ -12,7 +12,11 @@ export function MiniPreview({ resume }: { resume: Resume }) {
       .filter(Boolean)
       .slice(0, 2)
       .join('') || '?'
-  const competences = (resume.x_coreCompetence ?? []).slice(0, 5)
+  const skillCount = Math.min(
+    (resume.x_coreCompetence?.length ?? 0) + (resume.skills?.length ?? 0),
+    6,
+  )
+  const competences = Array.from({ length: skillCount })
   const firstJob = (resume.work ?? [])[0]
 
   return (

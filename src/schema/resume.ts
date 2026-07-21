@@ -88,6 +88,14 @@ export const LanguageSchema = z
   })
   .passthrough()
 
+export const SkillSchema = z
+  .object({
+    name: str.optional(),
+    level: str.optional(),
+    keywords: z.array(str).optional(),
+  })
+  .passthrough()
+
 export const AdvisorySchema = z
   .object({
     role: str.optional(),
@@ -112,6 +120,7 @@ export const ResumeSchema = z
     certificates: z.array(CertificateSchema).optional(),
     awards: z.array(AwardSchema).optional(),
     languages: z.array(LanguageSchema).optional(),
+    skills: z.array(SkillSchema).optional(), // JSON Resume standard skills
     // Extensions
     x_coreCompetence: z.array(str).optional(),
     x_advisory: z.array(AdvisorySchema).optional(),
