@@ -156,6 +156,28 @@ export function CvForm({
       </details>
 
       <details className="card">
+        <summary>Skills</summary>
+        <ObjectListEditor
+          items={resume.skills ?? []}
+          onChange={(items) => set(['skills'], items)}
+          addLabel="Add skill"
+          fields={[{ key: 'name', label: 'Skill' }]}
+          makeNew={() => ({ name: '', keywords: [] })}
+          renderExtra={(item, update) => (
+            <div className="field">
+              <span className="field-label">Keywords (optional)</span>
+              <StringListEditor
+                items={(item.keywords as string[] | undefined) ?? []}
+                rows={1}
+                addLabel="Add keyword"
+                onChange={(kw) => update({ keywords: kw } as never)}
+              />
+            </div>
+          )}
+        />
+      </details>
+
+      <details className="card">
         <summary>Languages</summary>
         <ObjectListEditor
           items={resume.languages ?? []}

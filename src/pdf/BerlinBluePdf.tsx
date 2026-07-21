@@ -213,6 +213,14 @@ function Sidebar({ resume }: { resume: Resume }) {
 
       <SideList title="Core competence" items={resume.x_coreCompetence ?? []} variant="bullet" />
 
+      <SideList
+        title="Skills"
+        items={(resume.skills ?? []).map((sk) =>
+          joined([sk.name, (sk.keywords ?? []).length ? `(${(sk.keywords ?? []).join(', ')})` : undefined], ' '),
+        )}
+        variant="bullet"
+      />
+
       {(resume.x_advisory ?? []).length > 0 && (
         <>
           <Text style={s.sideH} minPresenceAhead={KEEP_SIDE}>

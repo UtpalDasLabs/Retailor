@@ -74,6 +74,37 @@ describe('parseReply — cv-edits back-compat', () => {
     expect(res.warnings).toEqual([])
   })
 
+  it('creates a missing array so insert into /skills/- lands (no more skipped)', () => {
+    const reply =
+      '```cv-edits\n{"edits":[' +
+      '{"op":"insert","path":"/skills/-","value":{"name":"Python","keywords":["Django"]}},' +
+      '{"op":"insert","path":"/skills/-","value":{"name":"Leadership"}}' +
+      ']}\n```'
+    const res = parseReply(reply, base())
+    expect(res.ok).toBe(true)
+    if (!res.ok) return
+    expect(res.warnings).toEqual([])
+    expect(res.proposed.skills?.map((s) => s.name)).toEqual(['Python', 'Leadership'])
+    // Shows up as a reviewable Skills change.
+    expect(res.changes.find((c) => c.id === 'skills')).toBeTruthy()
+  })
+
+  it('surfaces a full-resume reply skills change in the diff', () => {
+    const reply =
+      'Here you go:\n```json\n' +
+      JSON.stringify({
+        basics: { name: 'Robin Fields' },
+        skills: [{ name: 'Product Strategy', keywords: ['Roadmapping', 'Discovery'] }],
+      }) +
+      '\n```'
+    const res = parseReply(reply, base())
+    expect(res.ok).toBe(true)
+    if (!res.ok) return
+    const skillsChange = res.changes.find((c) => c.id === 'skills')
+    expect(skillsChange?.after).toContain('Product Strategy')
+    expect(skillsChange?.after).toContain('Roadmapping')
+  })
+
   it('skips invalid edits with a warning but applies the rest', () => {
     const reply =
       '```cv-edits\n{"edits":[' +

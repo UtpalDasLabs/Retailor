@@ -25,6 +25,7 @@ export function emptyResume(): Resume {
     certificates: [],
     awards: [],
     languages: [],
+    skills: [],
     x_coreCompetence: [],
     x_advisory: [],
     x_portfolio: [],

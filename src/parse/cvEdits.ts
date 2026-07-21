@@ -95,7 +95,37 @@ function setAt(doc: unknown, pointer: string, value: unknown): void {
   }
 }
 
+/**
+ * Create a missing parent array before an insert, so an edit like
+ * `insert /skills/-` works even when the CV has no skills yet. Only fills in
+ * absent containers; existing values are left untouched.
+ */
+function ensureInsertParent(doc: unknown, pointer: string): void {
+  const tokens = parsePointer(pointer)
+  if (tokens.length < 2) return
+  let cur: unknown = doc
+  for (let i = 0; i < tokens.length - 1; i++) {
+    const token = tokens[i]
+    const isFinalParent = i === tokens.length - 2
+    if (Array.isArray(cur)) {
+      const idx = Number(token)
+      if (!Number.isInteger(idx) || idx < 0 || idx >= cur.length) return
+      cur = cur[idx]
+    } else if (cur !== null && typeof cur === 'object') {
+      const obj = cur as Record<string, unknown>
+      if (obj[token] === undefined || obj[token] === null) {
+        const next = tokens[i + 1]
+        obj[token] = isFinalParent || /^\d+$/.test(next) || next === '-' ? [] : {}
+      }
+      cur = obj[token]
+    } else {
+      return
+    }
+  }
+}
+
 function insertAt(doc: unknown, pointer: string, value: unknown): void {
+  ensureInsertParent(doc, pointer)
   const { parent, token } = resolveParent(doc, pointer)
   if (!Array.isArray(parent)) throw new Error(`${pointer} is not a list`)
   const idx = token === '-' ? parent.length : Number(token)

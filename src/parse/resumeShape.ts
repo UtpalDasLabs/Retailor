@@ -15,6 +15,7 @@ const OBJECT_LIST_KEYS = [
   'certificates',
   'awards',
   'languages',
+  'skills',
   'x_advisory',
   'x_memberships',
 ] as const
