@@ -52,7 +52,8 @@ export function Step4Review({
   warnings,
   accepted,
   setAccepted,
-  onStartAnother,
+  onAnotherJob,
+  onCommitToCv,
   onToast,
 }: {
   base: Resume
@@ -60,7 +61,8 @@ export function Step4Review({
   warnings: string[]
   accepted: Set<string>
   setAccepted: (s: Set<string>) => void
-  onStartAnother: (applied: Resume) => void
+  onAnotherJob: () => void
+  onCommitToCv: (applied: Resume) => void
   onToast: (msg: string) => void
 }) {
   const [tab, setTab] = useState<'changes' | 'preview'>('changes')
@@ -166,19 +168,41 @@ export function Step4Review({
           {blob ? 'Download PDF' : 'Preparing PDF…'}
         </button>
         <button type="button" className="btn btn-lg" onClick={() => exportResumeJson(applied)}>
-          Save my updated CV file (.json)
+          Save this CV as a file (.json)
         </button>
         <button
           type="button"
           className="btn"
           onClick={() => {
-            onStartAnother(applied)
-            onToast('Saved these changes to your CV. Ready for the next job ad.')
+            onAnotherJob()
+            onToast('Ready for the next job — your saved CV is unchanged.')
           }}
         >
-          Start another job ad
+          Tailor another job
         </button>
+        {changes.length > 0 && (
+          <button
+            type="button"
+            className="btn"
+            title="Fold these accepted edits into your saved CV so future jobs start from them"
+            onClick={() => {
+              if (
+                window.confirm(
+                  'Fold these accepted edits into your saved CV? This changes your baseline — future jobs will be tailored from this version instead of your original.',
+                )
+              ) {
+                onCommitToCv(applied)
+              }
+            }}
+          >
+            Keep these edits in my CV
+          </button>
+        )}
       </div>
+      <p className="hint" style={{ marginTop: 10 }}>
+        Downloading a PDF or saving a file never changes your saved CV. Use <strong>Tailor another
+        job</strong> to start the next one from your original CV.
+      </p>
     </div>
   )
 }

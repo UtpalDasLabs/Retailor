@@ -8,6 +8,7 @@ export function Step3Paste({
   onReplyChange,
   base,
   onParsed,
+  onClear,
   onGoStep2,
   onToast,
 }: {
@@ -15,6 +16,7 @@ export function Step3Paste({
   onReplyChange: (v: string) => void
   base: Resume
   onParsed: (result: Extract<ParseResult, { ok: true }>) => void
+  onClear: () => void
   onGoStep2: () => void
   onToast: (msg: string) => void
 }) {
@@ -82,7 +84,24 @@ export function Step3Paste({
             onChange={(e) => handleFile(e.target.files?.[0])}
           />
         </label>
+        <button
+          type="button"
+          className="btn"
+          disabled={!reply.trim()}
+          onClick={() => {
+            onReplyChange('')
+            setError(null)
+            onClear()
+            onToast('Cleared. Paste the next AI reply here.')
+          }}
+        >
+          Clear
+        </button>
       </div>
+      <p className="hint">
+        Doing several jobs? Paste one reply, download its PDF, then <strong>Clear</strong> and paste
+        the next — your saved CV stays the same for each one.
+      </p>
 
       {error && (
         <div className="parse-error" role="alert">
