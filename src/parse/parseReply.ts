@@ -3,6 +3,7 @@ import { parseAllJsonObjects } from './lenientJson'
 import { looksLikeResume, coerceResumeShape } from './resumeShape'
 import { mergeResume } from './merge'
 import { applyCvEdits } from './cvEdits'
+import { dedupeResume } from './dedupe'
 import { Change, diffResumes } from './diff'
 
 export const FIX_IT_SENTENCE =
@@ -26,16 +27,35 @@ export type ParseResult =
     }
   | { ok: false; error: ParseError }
 
+function dedupeNote(removed: number): string[] {
+  if (removed <= 0) return []
+  return [
+    `Removed ${removed} line${removed > 1 ? 's' : ''} the AI had repeated word for word.`,
+  ]
+}
+
 function finishResume(base: Resume, replyObj: Record<string, unknown>): ParseResult {
   const merged = mergeResume(base, replyObj)
-  const proposed = coerceResumeShape(merged)
-  return { ok: true, proposed, changes: diffResumes(base, proposed), warnings: [], via: 'resume' }
+  const { resume: proposed, removed } = dedupeResume(coerceResumeShape(merged))
+  return {
+    ok: true,
+    proposed,
+    changes: diffResumes(base, proposed),
+    warnings: dedupeNote(removed),
+    via: 'resume',
+  }
 }
 
 function finishCvEdits(base: Resume, edits: unknown[]): ParseResult {
   const { proposed, warnings } = applyCvEdits(base, edits)
-  const coerced = coerceResumeShape(proposed)
-  return { ok: true, proposed: coerced, changes: diffResumes(base, coerced), warnings, via: 'cv-edits' }
+  const { resume: coerced, removed } = dedupeResume(coerceResumeShape(proposed))
+  return {
+    ok: true,
+    proposed: coerced,
+    changes: diffResumes(base, coerced),
+    warnings: [...warnings, ...dedupeNote(removed)],
+    via: 'cv-edits',
+  }
 }
 
 /**

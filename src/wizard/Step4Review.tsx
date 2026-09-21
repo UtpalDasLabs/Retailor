@@ -112,7 +112,7 @@ export function Step4Review({
         <div className="changes-pane">
           {warnings.length > 0 && (
             <div className="warn-box">
-              <strong>Some edits couldn’t be applied and were skipped:</strong>
+              <strong>Heads up — a few things were adjusted:</strong>
               <ul>
                 {warnings.map((w, i) => (
                   <li key={i}>{w}</li>
