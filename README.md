@@ -25,6 +25,15 @@ Yes. Retailor runs entirely in your web browser.
 
 > A reminder shown in the app: AIs sometimes exaggerate. Always check the changes — you are responsible for what your CV claims.
 
+## Install it like an app
+
+Retailor is a Progressive Web App, so you can add it to your phone's home screen or your desktop and open it like any other app.
+
+- **iPhone/iPad:** open it in Safari, tap the Share button, then **Add to Home Screen**.
+- **Android/Chrome/Edge:** open it and choose **Install app** from the browser menu (or the install icon in the address bar).
+
+Once installed it works **offline** — your CV is already on your device, so you can edit it and re-download your PDF with no connection. (You'll only need internet to talk to your AI in step 2.)
+
 ## For developers
 
 Retailor is a fully static Vite + React + TypeScript app.
@@ -42,6 +51,7 @@ npm run build    # static production build in dist/
 - **Reply parsing** (`src/parse/`) is built to survive messy, real-world LLM output. It scans every fenced and bare JSON block, parses leniently (tolerating trailing commas, comments, and smart quotes), and picks the last block that looks like a resume. That reply is deep-merged onto your current CV (unknown fields preserved, anything the AI omitted is kept from your data), and the difference is shown as a section-aware, toggleable diff. A legacy `cv-edits` block is still accepted for back-compatibility, with forgiving op-name synonyms. If the AI renames you, that change is flagged and left off by default.
 - **Importing a PDF/Word CV** (`src/import/`) happens entirely in the browser: text is extracted with the bundled pdf.js worker (same-origin — no CDN) or `mammoth` for DOCX, then a conservative heuristic pre-fills the fields it's confident about (name, contact details, headline, summary) and leaves the rest for you — on complex two-column layouts it may only fill contact details and leave name/headline to you or the AI path. For a cleaner structured result there's an optional AI path: the extracted text is turned into a copy-paste prompt, and the AI's JSON reply flows back through the same parser. Scanned/image-only PDFs have no text layer, so extraction finds nothing and the app points you to the form or AI instead. No file is ever uploaded.
 - **Everything is local.** State lives in `localStorage` (versioned, with automatic migration from the previous version). Fonts are bundled; there are no runtime network calls to third parties.
+- **PWA / offline** (`vite-plugin-pwa`): the app shell is precached (~490 KB) and the heavy PDF machinery — the react-pdf chunk, the pdf.js worker and the embedded TrueType fonts — is cached on first use instead, so installing stays a light download. The service worker uses `autoUpdate`, so a deploy never strands anyone on a stale shell.
 
 ### Fonts, templates, privacy
 
