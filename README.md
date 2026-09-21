@@ -21,7 +21,7 @@ Yes. Retailor runs entirely in your web browser.
 1. **Your CV** — start from the built-in example, import an existing CV (**PDF or Word**, read entirely in your browser), load a CV file you saved before, or type your details into a simple form. Add a photo if you like (it stays on your device).
 2. **Ask your AI** — paste the job advert into Retailor, tap **Copy prompt**, then drop the message into your AI chatbot and send. (Leave the advert blank and the message keeps a "paste the job ad here" placeholder instead.) The prompt tells the AI to act as a hiring manager, assess your fit honestly, and return your complete tailored CV — without inventing anything.
 3. **Paste the reply** — copy the AI's whole answer and paste it back into Retailor. It reads the reply and works out exactly what changed.
-4. **Review & download** — see each suggested change side by side (what you have now vs. what the AI suggests), keep or drop each one, preview the finished CV, and **download your PDF**. You can also save your updated CV as a file for next time.
+4. **Review & download** — see each suggested change side by side (what you have now vs. what the AI suggests), keep or drop each one, and **edit any of them** — handy when the AI leaves a blank for you to fill in, like "[CONFIRM team size]". Those are flagged *needs your input*. Then preview the finished CV and **download your PDF**. You can also save your updated CV as a file for next time.
 
 > A reminder shown in the app: AIs sometimes exaggerate. Always check the changes — you are responsible for what your CV claims.
 

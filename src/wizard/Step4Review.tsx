@@ -5,26 +5,43 @@ import { PdfPreview } from '../preview/PdfPreview'
 import { usePdfBlob } from '../preview/usePdfBlob'
 import { pdfFileName } from '../pdf/renderPdf'
 import { exportResumeJson, savePdf } from '../storage/local'
+import { ValueEditor } from './ValueEditor'
+
+// AI drafts often leave blanks to fill in ("[CONFIRM team size]"), so the
+// suggested side of every change is editable before you preview or download.
+const PLACEHOLDER_RE = /\[[^\]]*(confirm|tbd|x%|add|your)[^\]]*\]/i
 
 function ChangeCard({
   change,
   accepted,
   onToggle,
+  onEdit,
 }: {
   change: Change
   accepted: boolean
   onToggle: () => void
+  onEdit: (value: unknown) => void
 }) {
+  const [editing, setEditing] = useState(false)
+  const needsInput = PLACEHOLDER_RE.test(change.after)
+  const workLabels = change.id.startsWith('work.') ? { name: 'Company' } : undefined
+
   return (
     <div className={'change' + (accepted ? '' : ' off') + (change.flagged ? ' flagged' : '')}>
-      <label className="change-head">
-        <input type="checkbox" checked={accepted} onChange={onToggle} />
-        <span className="change-section">
-          {change.flagged ? '⚠ ' : ''}
-          {change.section}
-        </span>
+      <div className="change-head">
+        <label className="change-head-main">
+          <input type="checkbox" checked={accepted} onChange={onToggle} />
+          <span className="change-section">
+            {change.flagged ? '⚠ ' : ''}
+            {change.section}
+          </span>
+        </label>
+        {needsInput && !editing && <span className="change-todo">needs your input</span>}
         <span className={'change-kind ' + change.kind}>{change.kind}</span>
-      </label>
+        <button type="button" className="btn btn-sm" onClick={() => setEditing((v) => !v)}>
+          {editing ? 'Done' : 'Edit'}
+        </button>
+      </div>
       {change.flagged && (
         <p className="change-warn">
           This changes your name. Leave it off unless you’re sure.
@@ -38,13 +55,22 @@ function ChangeCard({
           </div>
         ) : null}
         <div className="diff-col after">
-          <span className="diff-tag">Suggested</span>
-          <pre>{change.after}</pre>
+          <span className="diff-tag">{editing ? 'Your version' : 'Suggested'}</span>
+          {editing ? (
+            <ValueEditor
+              value={change.afterValue}
+              overrides={workLabels}
+              onChange={(next) => onEdit(next)}
+            />
+          ) : (
+            <pre>{change.after}</pre>
+          )}
         </div>
       </div>
     </div>
   )
 }
+
 
 export function Step4Review({
   base,
@@ -52,6 +78,7 @@ export function Step4Review({
   warnings,
   accepted,
   setAccepted,
+  onEditChange,
   onAnotherJob,
   onCommitToCv,
   onToast,
@@ -61,6 +88,7 @@ export function Step4Review({
   warnings: string[]
   accepted: Set<string>
   setAccepted: (s: Set<string>) => void
+  onEditChange: (id: string, value: unknown) => void
   onAnotherJob: () => void
   onCommitToCv: (applied: Resume) => void
   onToast: (msg: string) => void
@@ -138,7 +166,17 @@ export function Step4Review({
                 <span className="hint">{accepted.size} of {changes.length} kept</span>
               </div>
               {changes.map((c) => (
-                <ChangeCard key={c.id} change={c} accepted={accepted.has(c.id)} onToggle={() => toggle(c.id)} />
+                <ChangeCard
+                  key={c.id}
+                  change={c}
+                  accepted={accepted.has(c.id)}
+                  onToggle={() => toggle(c.id)}
+                  onEdit={(value) => {
+                    // Editing a suggestion means you want it, so keep it on.
+                    if (!accepted.has(c.id)) setAccepted(new Set([...accepted, c.id]))
+                    onEditChange(c.id, value)
+                  }}
+                />
               ))}
             </>
           )}

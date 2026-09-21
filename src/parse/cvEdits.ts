@@ -174,15 +174,17 @@ export function applyCvEdits(base: Resume, edits: unknown[]): CvEditsResult {
   const warnings: string[] = []
   let applied = 0
 
-  edits.forEach((raw, i) => {
+  edits.forEach((raw) => {
     if (raw === null || typeof raw !== 'object') {
-      warnings.push(`Edit ${i + 1}: not a valid edit — skipped.`)
+      warnings.push(`One of the AI’s suggestions wasn’t in a readable form, so it was skipped.`)
       return
     }
     const edit = raw as Record<string, unknown>
     const op = canonicalOp(edit.op, edit.path)
     if (!op) {
-      warnings.push(`Edit ${i + 1}: unknown action "${String(edit.op)}" — skipped.`)
+      warnings.push(
+        `One suggestion asked for an action Retailor doesn’t know ("${String(edit.op)}"), so it was skipped.`,
+      )
       return
     }
     try {
@@ -204,8 +206,10 @@ export function applyCvEdits(base: Resume, edits: unknown[]): CvEditsResult {
         }
       }
       applied++
-    } catch (e) {
-      warnings.push(`Edit ${i + 1} (${op} ${String(edit.path)}): ${e instanceof Error ? e.message : String(e)} — skipped.`)
+    } catch {
+      warnings.push(
+        `One suggestion pointed at “${String(edit.path)}”, which isn’t a spot in your CV, so it was skipped. You can add it yourself with the Edit button on any change.`,
+      )
     }
   })
 

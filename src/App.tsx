@@ -11,7 +11,7 @@ import {
   saveResume,
   saveSession,
 } from './storage/local'
-import { Change, defaultAcceptedIds } from './parse/diff'
+import { Change, defaultAcceptedIds, formatChangeValue } from './parse/diff'
 import { parseReply } from './parse/parseReply'
 import { Stepper } from './wizard/Stepper'
 import { Step1Cv } from './wizard/Step1Cv'
@@ -253,6 +253,15 @@ export function App() {
               accepted={accepted}
               setAccepted={setAccepted}
               onToast={showToast}
+              onEditChange={(id, value) =>
+                setChanges((prev) =>
+                  prev.map((c) =>
+                    c.id === id
+                      ? { ...c, afterValue: value, after: formatChangeValue(c, value) }
+                      : c,
+                  ),
+                )
+              }
               onAnotherJob={() => {
                 // Non-destructive: keep the master CV, drop this job's overlay.
                 setReply('')
