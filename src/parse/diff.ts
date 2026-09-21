@@ -254,3 +254,13 @@ export function applyChanges(
 export function defaultAcceptedIds(changes: Change[]): Set<string> {
   return new Set(changes.filter((c) => !c.flagged).map((c) => c.id))
 }
+
+/**
+ * Render a value the same way the diff did, so a change edited by hand still
+ * displays in its section's format.
+ */
+export function formatChangeValue(change: Change, value: unknown): string {
+  if (change.id.startsWith('work.')) return fmtWorkItem(value)
+  const section = topSections().find((s) => s.path.join('.') === change.id)
+  return section ? section.format(value) : scalar(value)
+}

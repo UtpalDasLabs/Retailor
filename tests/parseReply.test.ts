@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path'
 import sample from '../src/data/sample-resume.json'
 import { Resume } from '../src/schema/resume'
 import { parseReply } from '../src/parse/parseReply'
-import { applyChanges, defaultAcceptedIds } from '../src/parse/diff'
+import { applyChanges, defaultAcceptedIds, formatChangeValue } from '../src/parse/diff'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const fx = (name: string) => readFileSync(join(here, '..', 'fixtures', name), 'utf8')
@@ -172,5 +172,36 @@ describe('applyChanges — toggling', () => {
     expect(applied.basics?.label).toContain('Subscription & Platform Growth')
     // Summary untouched (still the original 4 paragraphs).
     expect(applied.basics?.summary?.length).toBe(base().basics?.summary?.length)
+  })
+})
+
+describe('editing a suggested change', () => {
+  it('re-formats an edited value and carries it into the applied CV', () => {
+    const res = parseReply(fx('a-good-reply.md'), base())
+    expect(res.ok).toBe(true)
+    if (!res.ok) return
+    const change = res.changes.find((c) => c.id === 'basics.summary')!
+    // The user fills in a placeholder and drops a paragraph.
+    const edited = ['Led product for wellness apps, lifting retention by 18 points.']
+    const after = formatChangeValue(change, edited)
+    expect(after).toContain('lifting retention by 18 points')
+
+    const next = res.changes.map((c) =>
+      c.id === change.id ? { ...c, afterValue: edited, after } : c,
+    )
+    const applied = applyChanges(base(), next, defaultAcceptedIds(next))
+    expect(applied.basics?.summary).toEqual(edited)
+  })
+
+  it('keeps a work item editable as a structured entry', () => {
+    const res = parseReply(fx('a-good-reply.md'), base())
+    expect(res.ok).toBe(true)
+    if (!res.ok) return
+    const work = res.changes.find((c) => c.id === 'work.0')!
+    const value = work.afterValue as Record<string, unknown>
+    expect(typeof value.position).toBe('string')
+    expect(Array.isArray(value.highlights)).toBe(true)
+    const edited = { ...value, highlights: ['Grew paid subscriptions by 40% across 7 markets.'] }
+    expect(formatChangeValue(work, edited)).toContain('across 7 markets')
   })
 })
