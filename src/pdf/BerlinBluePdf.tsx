@@ -103,8 +103,10 @@ function makeStyles(density = 1) {
     sideItemText: { fontSize: 8.3, lineHeight: 1.45, flex: 1 },
     advisory: {
       fontSize: 9,
-      letterSpacing: 1.4,
-      lineHeight: 1.6,
+      // Barely tracked: the original wide tracking turned a long advisory role
+      // into an unreadable spaced-out block once it wrapped over three lines.
+      letterSpacing: 0.3,
+      lineHeight: 1.5,
       color: '#fff',
       marginBottom: sp(6),
     },
@@ -196,6 +198,9 @@ function Sidebar({ resume, s }: { resume: Resume; s: Styles }) {
   if (b.email) about.push(b.email)
   if (linkedin?.username) about.push(`@${linkedin.username}`)
   else if (linkedin?.url) about.push(linkedin.url)
+  // Website — entered in Step 1 but previously never rendered. Shown without
+  // the scheme/trailing slash so it reads as a plain address.
+  if (b.url?.trim()) about.push(b.url.trim().replace(/^https?:\/\//i, '').replace(/\/+$/, ''))
   if (b.phone) about.push(b.phone)
   if (langs) about.push(langs)
   if (b.x_residency) about.push(b.x_residency)
@@ -374,22 +379,30 @@ function Main({ resume, s }: { resume: Resume; s: Styles }) {
           <Text style={s.mainH} minPresenceAhead={KEEP_MAIN}>
             Work experience
           </Text>
-          {work.map((w, i) => (
-            <View key={i}>
-              <View wrap={false}>
-                {w.position ? <Text style={s.workTitle}>{w.position}</Text> : null}
-                <Text style={s.workCo}>
-                  {joined([w.name, joined([w.startDate, w.endDate], ' – ')], ' | ')}
-                </Text>
+          {work.map((w, i) => {
+            const bullet = (h: string, j: number) => (
+              <View style={s.liRow} key={j} wrap={false}>
+                <Text style={s.liDot}>•</Text>
+                <Text style={s.liText}>{h}</Text>
               </View>
-              {(w.highlights ?? []).map((h, j) => (
-                <View style={s.liRow} key={j} wrap={false}>
-                  <Text style={s.liDot}>•</Text>
-                  <Text style={s.liText}>{h}</Text>
+            )
+            const highlights = w.highlights ?? []
+            return (
+              <View key={i}>
+                {/* The title, the company line and the first bullet travel as one
+                    unbreakable block, so a job heading can never be left alone at
+                    the foot of a page with its content overleaf. */}
+                <View wrap={false}>
+                  {w.position ? <Text style={s.workTitle}>{w.position}</Text> : null}
+                  <Text style={s.workCo}>
+                    {joined([w.name, joined([w.startDate, w.endDate], ' – ')], ' | ')}
+                  </Text>
+                  {highlights.length > 0 ? bullet(highlights[0], 0) : null}
                 </View>
-              ))}
-            </View>
-          ))}
+                {highlights.slice(1).map((h, j) => bullet(h, j + 1))}
+              </View>
+            )
+          })}
         </>
       )}
     </View>
