@@ -1,0 +1,225 @@
+{
+  "basics": {
+    "name": "Utpal Das",
+    "label": "Product & Growth Leader",
+    "email": "utpal.inbox@example.com",
+    "phone": "+ 49 - 176 6060 4156",
+    "url": "https://utpaldaslabs.github.io/",
+    "location": {
+      "address": "Beusselstrasse 31A",
+      "postalCode": "10553",
+      "city": "Berlin",
+      "countryCode": "DE"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "utpaldasprofile"
+      }
+    ],
+    "x_birthDate": "10/01/1987",
+    "x_residency": "Indian national with Permanent German residency",
+    "summary": [
+      "Product and growth leader with 18+ years building and scaling automotive marketplaces, consumer platforms, and digital businesses across Europe.",
+      "Track record of owning customer journeys end to end: +23% conversion, 30% organic acquisition growth across 7 markets, 2x engagement, and lead-quality improvements at Europe's largest used-car marketplace.",
+      "Proven commercial impact: +30% subscription revenue and +50% vehicle contribution margin, with product, marketing, CRM and P&L ownership in one seat.",
+      "Currently Head of Digital Solutions, leading Product, Design, Engineering, and Marketing/PR, and contributing to Series D strategy."
+    ],
+    "x_highlights": [
+      "Grew and led cross-functional growth organizations: 5 senior PMs, 3 app marketers, 2 business analysts, and 24 developers; 64 people across 7 teams.",
+      "Built AI/ML applications across computer vision, supply-demand prediction, consumer demand, sponsored listings, and agentic product initiatives.",
+      "Led operations digitization through partner platforms, digital handover, digital damage reporting, OCR fine handling, and supply-chain automation.",
+      "Contributed to IPO-readiness and leadership transitions, including an NYSE journey and a Series D fundraising strategy."
+    ]
+  },
+  "x_coreCompetence": [
+    "Customer Journey & Conversion Optimization",
+    "Marketplace Growth & Monetization",
+    "CRM & Sales Systems (Salesforce)",
+    "AI Product Strategy",
+    "Predictive Models & Data Platforms",
+    "Logistics & Fulfilment Systems",
+    "Platform Product Management",
+    "Scaling Product Organizations",
+    "Cross-Functional Leadership"
+  ],
+  "skills": [
+    {
+      "name": "Growth & Conversion",
+      "keywords": [
+        "Conversion rate optimization",
+        "Funnel optimization",
+        "Organic acquisition",
+        "Engagement growth",
+        "Lead quality",
+        "Sponsored listings",
+        "Monetization",
+        "App Store & Play Store marketing"
+      ]
+    },
+    {
+      "name": "CRM & Customer Journey",
+      "keywords": [
+        "Salesforce",
+        "Customer journey optimization",
+        "Marketplace growth",
+        "Multi-market product delivery"
+      ]
+    }
+  ],
+  "x_advisory": [
+    {
+      "role": "Executive Advisory Board Member",
+      "organization": "Hired Plus",
+      "startDate": "Aug 2023",
+      "endDate": "Jul 2024"
+    }
+  ],
+  "awards": [
+    {
+      "title": "Best App - Germany app/play store 2024",
+      "awarder": "NTV & DISQ"
+    },
+    {
+      "title": "Manufacturing Quality consultant",
+      "awarder": "Porsche Design Center"
+    },
+    {
+      "title": "Microsoft MVP Award",
+      "awarder": "Merz Technologies"
+    },
+    {
+      "title": "Service & Commitment Award",
+      "awarder": "TCS"
+    }
+  ],
+  "x_portfolio": [
+    "AutoScout24 iOS, Android & white-label apps",
+    "Sponsored listings & App Search",
+    "Subscription platform and partner portal",
+    "Digital handover & damage reporting",
+    "Supply-demand prediction models",
+    "Cockpit display validation tooling",
+    "Additional platform initiative number 1",
+    "Additional platform initiative number 2",
+    "Additional platform initiative number 3",
+    "Additional platform initiative number 4",
+    "Additional platform initiative number 5",
+    "Additional platform initiative number 6",
+    "Additional platform initiative number 7",
+    "Additional platform initiative number 8",
+    "Additional platform initiative number 9",
+    "Additional platform initiative number 10",
+    "Additional platform initiative number 11",
+    "Additional platform initiative number 12"
+  ],
+  "education": [
+    {
+      "institution": "Visvesvaraya Technological University",
+      "area": "Electronics & Communication",
+      "studyType": "B.E.",
+      "startDate": "2004",
+      "endDate": "2008"
+    }
+  ],
+  "certificates": [
+    {
+      "name": "Certified Scrum Product Owner",
+      "issuer": "Scrum Alliance",
+      "date": "2017"
+    },
+    {
+      "name": "Leading Digital Transformation",
+      "issuer": "INSEAD",
+      "date": "2021"
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "fluency": "Fluent"
+    },
+    {
+      "language": "Hindi",
+      "fluency": "Native"
+    },
+    {
+      "language": "German",
+      "fluency": "Professional"
+    },
+    {
+      "language": "Japanese",
+      "fluency": "Basic"
+    },
+    {
+      "language": "Assamese",
+      "fluency": "Native"
+    }
+  ],
+  "x_memberships": [
+    {
+      "organization": "Greenpeace India",
+      "since": "since 2008"
+    },
+    {
+      "organization": "WWF",
+      "since": "since 2010"
+    },
+    {
+      "organization": "Automotive circle",
+      "since": "since 2017"
+    }
+  ],
+  "work": [
+    {
+      "position": "Head of Digital Solutions",
+      "name": "Cubonic GmbH",
+      "startDate": "Feb 2024",
+      "endDate": "Present",
+      "highlights": [
+        "Lead four departments — Product, Design, Engineering, and Marketing/PR — unifying acquisition, engagement, and conversion initiatives under one organization.",
+        "Report directly to the CEO; lead product vision, AI strategy, roadmap, and execution across the digital ecosystem.",
+        "Accelerated go-to-market by 18 months through partnerships, platform redesign, and data-driven roadmap execution.",
+        "Contribute to Series D fundraising strategy and key P&L decisions while shaping AI-enabled platform and mobility initiatives."
+      ]
+    },
+    {
+      "position": "Head of Product / Head of Apps",
+      "name": "AutoScout24 GmbH",
+      "startDate": "Aug 2022",
+      "endDate": "Jan 2024",
+      "highlights": [
+        "Owned the mobile and web customer journey across 7 markets, delivering +23% conversion and 2x engagement.",
+        "Grew organic acquisition by 30% through App Store and Play Store optimization and lifecycle campaigns.",
+        "Launched sponsored listings and App Search, which drove 15% advertising revenue growth.",
+        "Led 5 senior PMs, 3 app marketers, 2 business analysts, and 24 developers across growth, engagement, conversion, and revenue."
+      ]
+    },
+    {
+      "position": "Product Lead",
+      "name": "Cazoo / Cluno GmbH",
+      "startDate": "Feb 2019",
+      "endDate": "Aug 2022",
+      "highlights": [
+        "Led product strategy across partner platform, purchasing, operations, remarketing, customer apps, and digital handover workflows.",
+        "Owned first-mile, mid-mile, and last-mile logistics, including planning systems and supply-chain automation.",
+        "Increased subscription revenue by 30% and vehicle contribution margin by 50%.",
+        "Built predictive supply-demand and operational-planning models with the data team."
+      ]
+    },
+    {
+      "position": "Product Manager",
+      "name": "ZEISS / Merz Technologies",
+      "startDate": "Jul 2012",
+      "endDate": "Jan 2019",
+      "highlights": [
+        "Led product for automotive and avionics applications, including cockpit display hardware, diagnostic tools, and validation systems.",
+        "Developed testing frameworks and system validation tooling to improve reliability, quality, and compliance.",
+        "Managed 64 people across 7 teams spanning engineering, quality, and delivery."
+      ]
+    }
+  ],
+  "meta": {
+    "template": "berlin-blue"
+  }
+}
