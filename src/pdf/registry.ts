@@ -6,7 +6,7 @@ import { BerlinBlueDocument } from './BerlinBluePdf'
 export interface PdfTemplate {
   id: string
   name: string
-  Document: ComponentType<{ resume: Resume }>
+  Document: ComponentType<{ resume: Resume; density?: number }>
 }
 
 export const TEMPLATES: PdfTemplate[] = [

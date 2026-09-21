@@ -23,129 +23,142 @@ const SIDE_MUTED = '#cfdaea'
 
 const SIDEBAR_W = '34%'
 
-const s = StyleSheet.create({
-  page: {
-    fontFamily: 'SourceSans3',
-    fontSize: 9.6,
-    color: BODY,
-    lineHeight: 1.5,
-    flexDirection: 'row',
-  },
-  band: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    width: SIDEBAR_W,
-    backgroundColor: NAVY,
-  },
-  sideCol: {
-    width: SIDEBAR_W,
-    paddingTop: 28,
-    paddingBottom: 22,
-    paddingHorizontal: 20,
-    color: SIDE_TEXT,
-  },
-  mainCol: {
-    width: '66%',
-    paddingTop: 34,
-    paddingRight: 30,
-    paddingBottom: 28,
-    paddingLeft: 26,
-  },
+/**
+ * Styles are built per render so the document can be laid out slightly more
+ * compactly. `density` scales only whitespace (margins/padding) — never font
+ * sizes — so a 1.0 and a 0.85 render read identically, the second just fits
+ * more. renderResumePdf uses this to pull back a lone trailing line.
+ */
+function makeStyles(density = 1) {
+  const sp = (v: number) => Math.round(v * density * 100) / 100
+  return StyleSheet.create({
+    page: {
+      fontFamily: 'SourceSans3',
+      fontSize: 9.6,
+      color: BODY,
+      lineHeight: 1.5,
+      flexDirection: 'row',
+      // Bottom breathing room lives on the Page, not the columns. A column's
+      // paddingBottom spills onto a new page when content ends near the
+      // boundary, which produced a completely blank trailing page.
+      paddingBottom: sp(26),
+    },
+    band: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      bottom: 0,
+      width: SIDEBAR_W,
+      backgroundColor: NAVY,
+    },
+    sideCol: {
+      width: SIDEBAR_W,
+      paddingTop: sp(28),
+      paddingHorizontal: 20,
+      color: SIDE_TEXT,
+    },
+    mainCol: {
+      width: '66%',
+      paddingTop: sp(34),
+      paddingRight: 30,
+      paddingLeft: 26,
+    },
 
-  // sidebar
-  photoWrap: { alignItems: 'center', marginBottom: 22 },
-  photo: {
-    width: 130,
-    height: 130,
-    borderRadius: 65,
-    objectFit: 'cover',
-    border: '3pt solid #ffffff',
-  },
-  photoPlaceholder: {
-    width: 130,
-    height: 130,
-    borderRadius: 65,
-    border: '3pt solid #ffffff',
-    backgroundColor: '#46618f',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  photoInitials: { color: '#fff', fontSize: 44, fontWeight: 700 },
-  sideH: {
-    color: '#fff',
-    fontSize: 10.5,
-    fontWeight: 700,
-    letterSpacing: 2.6,
-    textTransform: 'uppercase',
-    marginTop: 12,
-    marginBottom: 8,
-  },
-  aboutRow: { flexDirection: 'row', marginBottom: 7, color: SIDE_TEXT },
-  aboutMarker: { color: STEEL, marginRight: 6, fontSize: 8.3 },
-  aboutText: { fontSize: 8.3, lineHeight: 1.4, flex: 1 },
-  sideLi: { flexDirection: 'row', marginBottom: 6, color: '#fff' },
-  sideLiDot: { color: '#fff', marginRight: 6, fontSize: 10.3 },
-  sideLiText: { fontSize: 10.3, lineHeight: 1.35, flex: 1, color: '#fff' },
-  sideItem: { flexDirection: 'row', marginBottom: 7, color: SIDE_TEXT },
-  sideItemMarker: { color: SIDE_MUTED, marginRight: 6, fontSize: 8.3 },
-  sideItemText: { fontSize: 8.3, lineHeight: 1.45, flex: 1 },
-  advisory: {
-    fontSize: 9,
-    letterSpacing: 1.4,
-    lineHeight: 1.6,
-    color: '#fff',
-    marginBottom: 6,
-  },
+    // sidebar
+    photoWrap: { alignItems: 'center', marginBottom: sp(22) },
+    photo: {
+      width: 130,
+      height: 130,
+      borderRadius: 65,
+      objectFit: 'cover',
+      border: '3pt solid #ffffff',
+    },
+    photoPlaceholder: {
+      width: 130,
+      height: 130,
+      borderRadius: 65,
+      border: '3pt solid #ffffff',
+      backgroundColor: '#46618f',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    photoInitials: { color: '#fff', fontSize: 44, fontWeight: 700 },
+    sideH: {
+      color: '#fff',
+      fontSize: 10.5,
+      fontWeight: 700,
+      letterSpacing: 2.6,
+      textTransform: 'uppercase',
+      marginTop: sp(12),
+      marginBottom: sp(8),
+    },
+    aboutRow: { flexDirection: 'row', marginBottom: sp(7), color: SIDE_TEXT },
+    aboutMarker: { color: STEEL, marginRight: 6, fontSize: 8.3 },
+    aboutText: { fontSize: 8.3, lineHeight: 1.4, flex: 1 },
+    sideLi: { flexDirection: 'row', marginBottom: sp(6), color: '#fff' },
+    sideLiDot: { color: '#fff', marginRight: 6, fontSize: 10.3 },
+    sideLiText: { fontSize: 10.3, lineHeight: 1.35, flex: 1, color: '#fff' },
+    sideItem: { flexDirection: 'row', marginBottom: sp(7), color: SIDE_TEXT },
+    sideItemMarker: { color: SIDE_MUTED, marginRight: 6, fontSize: 8.3 },
+    sideItemText: { fontSize: 8.3, lineHeight: 1.45, flex: 1 },
+    advisory: {
+      fontSize: 9,
+      letterSpacing: 1.4,
+      lineHeight: 1.6,
+      color: '#fff',
+      marginBottom: sp(6),
+    },
 
-  // main
-  name: {
-    fontFamily: 'SourceSerif4',
-    fontStyle: 'italic',
-    fontWeight: 700,
-    fontSize: 32,
-    lineHeight: 1.2,
-    color: NAVY_TEXT,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
-  nameRule: {
-    width: 48,
-    borderBottomWidth: 2,
-    borderBottomColor: NAVY_TEXT,
-    marginTop: 6,
-    marginBottom: 24,
-  },
-  role: {
-    color: STEEL,
-    fontSize: 13,
-    fontWeight: 700,
-    letterSpacing: 3,
-    textTransform: 'uppercase',
-    lineHeight: 1.5,
-    marginBottom: 16,
-  },
-  mainH: {
-    color: STEEL,
-    fontSize: 10.5,
-    fontWeight: 700,
-    letterSpacing: 3,
-    textTransform: 'uppercase',
-    marginTop: 10,
-    marginBottom: 7,
-  },
-  para: { fontSize: 9.6, lineHeight: 1.5, marginBottom: 9 },
-  subhead: { fontSize: 9.8, fontWeight: 700, color: TITLE, marginTop: 3, marginBottom: 4 },
-  hlRow: { flexDirection: 'row', marginBottom: 3.5 },
-  hlDot: { marginRight: 5 },
-  hlText: { fontSize: 9.6, lineHeight: 1.5, flex: 1 },
-  workTitle: { fontSize: 10.2, fontWeight: 700, color: TITLE, lineHeight: 1.4, marginTop: 6 },
-  workCo: { fontSize: 10.2, fontWeight: 700, color: TITLE, lineHeight: 1.4, marginBottom: 5 },
-  liRow: { flexDirection: 'row', marginBottom: 4, paddingLeft: 4 },
-  liDot: { marginRight: 6 },
-  liText: { fontSize: 9.6, lineHeight: 1.55, flex: 1 },
-})
+    // main
+    name: {
+      fontFamily: 'SourceSerif4',
+      fontStyle: 'italic',
+      fontWeight: 700,
+      fontSize: 32,
+      lineHeight: 1.2,
+      color: NAVY_TEXT,
+      letterSpacing: 0.5,
+      textTransform: 'uppercase',
+    },
+    nameRule: {
+      width: 48,
+      borderBottomWidth: 2,
+      borderBottomColor: NAVY_TEXT,
+      marginTop: sp(6),
+      marginBottom: sp(24),
+    },
+    role: {
+      color: STEEL,
+      fontSize: 13,
+      fontWeight: 700,
+      letterSpacing: 3,
+      textTransform: 'uppercase',
+      lineHeight: 1.5,
+      marginBottom: sp(16),
+    },
+    mainH: {
+      color: STEEL,
+      fontSize: 10.5,
+      fontWeight: 700,
+      letterSpacing: 3,
+      textTransform: 'uppercase',
+      marginTop: sp(10),
+      marginBottom: sp(7),
+    },
+    para: { fontSize: 9.6, lineHeight: 1.5, marginBottom: sp(9) },
+    subhead: { fontSize: 9.8, fontWeight: 700, color: TITLE, marginTop: sp(3), marginBottom: sp(4) },
+    hlRow: { flexDirection: 'row', marginBottom: sp(3.5) },
+    hlDot: { marginRight: 5 },
+    hlText: { fontSize: 9.6, lineHeight: 1.5, flex: 1 },
+    workTitle: { fontSize: 10.2, fontWeight: 700, color: TITLE, lineHeight: 1.4, marginTop: sp(6) },
+    workCo: { fontSize: 10.2, fontWeight: 700, color: TITLE, lineHeight: 1.4, marginBottom: sp(5) },
+    liRow: { flexDirection: 'row', marginBottom: sp(4), paddingLeft: 4 },
+    liDot: { marginRight: 6 },
+    liText: { fontSize: 9.6, lineHeight: 1.55, flex: 1 },
+  })
+}
+
+type Styles = ReturnType<typeof makeStyles>
 
 // Keep a section heading with what follows: react-pdf pushes the heading to the
 // next page unless at least this many points remain below it (enough for its
@@ -168,7 +181,7 @@ function initials(name: string): string {
   )
 }
 
-function Sidebar({ resume }: { resume: Resume }) {
+function Sidebar({ resume, s }: { resume: Resume; s: Styles }) {
   const b = resume.basics ?? {}
   const loc = b.location ?? {}
   const linkedin = (b.profiles ?? []).find(
@@ -211,9 +224,10 @@ function Sidebar({ resume }: { resume: Resume }) {
         </View>
       ))}
 
-      <SideList title="Core competence" items={resume.x_coreCompetence ?? []} variant="bullet" />
+      <SideList s={s} title="Core competence" items={resume.x_coreCompetence ?? []} variant="bullet" />
 
       <SideList
+        s={s}
         title="Skills"
         items={(resume.skills ?? []).map((sk) =>
           joined([sk.name, (sk.keywords ?? []).length ? `(${(sk.keywords ?? []).join(', ')})` : undefined], ' '),
@@ -236,14 +250,16 @@ function Sidebar({ resume }: { resume: Resume }) {
       )}
 
       <SideList
+        s={s}
         title="Kudos received"
         items={(resume.awards ?? []).map((a) =>
           joined([a.title, a.awarder ? `(${a.awarder})` : undefined], ' '),
         )}
         variant="item"
       />
-      <SideList title="Product portfolio" items={resume.x_portfolio ?? []} variant="item" />
+      <SideList s={s} title="Product portfolio" items={resume.x_portfolio ?? []} variant="item" />
       <SideList
+        s={s}
         title="Education"
         items={(resume.education ?? []).map((e) =>
           joined(
@@ -258,6 +274,7 @@ function Sidebar({ resume }: { resume: Resume }) {
         variant="item"
       />
       <SideList
+        s={s}
         title="Certifications"
         items={(resume.certificates ?? []).map((c) =>
           joined([c.name, joined([c.issuer, c.date], ' ') ? `(${joined([c.issuer, c.date], ' ')})` : undefined], ' '),
@@ -265,6 +282,7 @@ function Sidebar({ resume }: { resume: Resume }) {
         variant="item"
       />
       <SideList
+        s={s}
         title="Active membership"
         items={(resume.x_memberships ?? []).map((m) =>
           joined([m.organization, m.since ? `(${m.since})` : undefined], ' '),
@@ -279,10 +297,12 @@ function SideList({
   title,
   items,
   variant,
+  s,
 }: {
   title: string
   items: string[]
   variant: 'bullet' | 'item'
+  s: Styles
 }) {
   const list = items.filter((x) => x && x.trim())
   if (list.length === 0) return null
@@ -308,7 +328,7 @@ function SideList({
   )
 }
 
-function Main({ resume }: { resume: Resume }) {
+function Main({ resume, s }: { resume: Resume; s: Styles }) {
   const b = resume.basics ?? {}
   const summary = b.summary ?? []
   const highlights = b.x_highlights ?? []
@@ -328,7 +348,7 @@ function Main({ resume }: { resume: Resume }) {
             Summary
           </Text>
           {summary.map((p, i) => (
-            <Text style={s.para} key={i}>
+            <Text style={s.para} key={i} orphans={2} widows={2}>
               {p}
             </Text>
           ))}
@@ -341,7 +361,7 @@ function Main({ resume }: { resume: Resume }) {
             Highlights
           </Text>
           {highlights.map((h, i) => (
-            <View style={s.hlRow} key={i}>
+            <View style={s.hlRow} key={i} wrap={false}>
               <Text style={s.hlDot}>•</Text>
               <Text style={s.hlText}>{h}</Text>
             </View>
@@ -376,13 +396,20 @@ function Main({ resume }: { resume: Resume }) {
   )
 }
 
-export function BerlinBlueDocument({ resume }: { resume: Resume }) {
+export function BerlinBlueDocument({
+  resume,
+  density = 1,
+}: {
+  resume: Resume
+  density?: number
+}) {
+  const s = makeStyles(density)
   return (
     <Document>
       <Page size="A4" style={s.page}>
         <View fixed style={s.band} />
-        <Sidebar resume={resume} />
-        <Main resume={resume} />
+        <Sidebar resume={resume} s={s} />
+        <Main resume={resume} s={s} />
       </Page>
     </Document>
   )
