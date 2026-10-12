@@ -2,10 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// GitHub Pages serves the app at https://utpaldaslabs.github.io/Retailor/ (the
-// default, which must match the repo name); retailor.utpaldas.com serves it at
-// the root, so vercel.json builds with BASE_PATH=/.
-const BASE = process.env.BASE_PATH ?? '/Retailor/'
+// Served at the root of https://retailor.utpaldas.com (vercel.json).
+const BASE = '/'
 
 export default defineConfig({
   base: BASE,

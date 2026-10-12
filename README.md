@@ -59,9 +59,11 @@ npm run build    # static production build in dist/
 - Templates live in `src/pdf/` and register in `src/pdf/registry.ts` — adding one is a component plus a registry entry. The first template, **berlin-blue**, is a two-column A4 design (navy sidebar, serif display name) that flows cleanly to as many pages as the content needs.
 - The repository ships only a **fictional sample persona** ("Robin Fields"). Keep your real CV out of git — exported files are named `*.private.json` and, like a `private/` folder, are gitignored.
 
-### Deploying to GitHub Pages
+### Deploying
 
-The included workflow (`.github/workflows/deploy.yml`) runs the tests, builds the app, and publishes it to GitHub Pages on every push to `main`. One-time setup: in the repository settings, set **Pages → Source → GitHub Actions**. The app is served at `https://<owner>.github.io/Retailor/` (the Vite `base` is `/Retailor/`; adjust it if you rename or fork the repo).
+The app is served at **https://retailor.utpaldas.com**, deployed by Vercel from `main` (`vercel.json`). The workflow (`.github/workflows/deploy.yml`) runs the tests and a build on every push and pull request.
+
+It used to live at `utpaldaslabs.github.io/Retailor/`. GitHub Pages still serves that address, but only the page in `handover/`, which carries a returning visitor's saved CV over to the new address (`public/handover.html` receives it) without sending it to any server.
 
 ## Disclaimer
 
