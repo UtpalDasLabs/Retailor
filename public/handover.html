@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Bringing your progress over…</title>
+<style>
+  :root { color-scheme: light dark; --bg: #fff; --fg: #111; --muted: #555; --accent: #325283; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #111; --fg: #eee; --muted: #aaa; } }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--fg);
+         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 26rem; padding: 2rem 1.25rem; text-align: center; }
+  p { color: var(--muted); }
+  label, a.button { display: inline-block; margin: .35rem; padding: .7rem 1.2rem; border-radius: .6rem;
+         background: var(--accent); color: #fff; font-weight: 600; text-decoration: none; cursor: pointer; }
+  a.secondary { background: transparent; color: var(--fg); border: 1px solid var(--muted); }
+  input { display: none; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="title">Bringing your progress over…</h1>
+  <p id="status"></p>
+  <div id="restore" hidden>
+    <label>Restore from file<input id="file" type="file" accept="application/json,.json" /></label>
+    <a class="button secondary" href="./">Start the app</a>
+  </div>
+</main>
+<script>
+/*
+ * Receives saved progress from the app's old address (utpaldaslabs.github.io)
+ * and writes it here. Opened by the handover page there with the data in the
+ * URL fragment, or by hand with the file that page offers when the data is
+ * too large for a URL.
+ *
+ * Nothing is ever thrown away: whichever copy is not kept is stored under a
+ * backup key, so a mistaken import can be undone.
+ */
+(function () {
+  var APP = "retailor";
+  var PREFIXES = ["retailor."];
+
+  function fromBase64Url(s) {
+    s = s.replace(/-/g, "+").replace(/_/g, "/");
+    var bin = atob(s + "===".slice((s.length + 3) % 4));
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  function unpack(payload) {
+    var kind = payload.slice(0, 2), bytes = fromBase64Url(payload.slice(2));
+    if (kind === "r.") return Promise.resolve(new TextDecoder().decode(bytes));
+    var stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+    return new Response(stream).text();
+  }
+
+  function ours(k) { return PREFIXES.some(function (p) { return k.indexOf(p) === 0; }); }
+
+  function current() {
+    var out = {};
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && ours(k)) out[k] = localStorage.getItem(k);
+    }
+    return out;
+  }
+
+  function size(obj) {
+    var n = 0;
+    for (var k in obj) n += k.length + String(obj[k]).length;
+    return n;
+  }
+
+  /*
+   * Someone who already started on the new address and then opened the old
+   * one would otherwise have that work replaced. Keep whichever copy holds
+   * more: progress only grows, so the larger copy is the one with more study
+   * in it. The other copy is kept under a backup key either way.
+   */
+  function apply(file) {
+    if (!file || file.app !== APP || typeof file.data !== "object") throw new Error("not ours");
+    var incoming = {};
+    for (var k in file.data) if (ours(k)) incoming[k] = file.data[k];
+    var existing = current();
+    if (size(incoming) <= size(existing)) {
+      localStorage.setItem("handover-incoming:" + APP, JSON.stringify(incoming));
+      return false;
+    }
+    if (size(existing)) localStorage.setItem("handover-backup:" + APP, JSON.stringify(existing));
+    for (var e in existing) localStorage.removeItem(e);
+    for (var i in incoming) localStorage.setItem(i, incoming[i]);
+    return true;
+  }
+
+  function finish(next) {
+    var safe = typeof next === "string" && next.charAt(0) === "/" && next.charAt(1) !== "/" ? next : "/";
+    location.replace(safe);
+  }
+
+  function fail() {
+    document.getElementById("title").textContent = "Your progress could not be read";
+    document.getElementById("status").textContent =
+      "If the old site offered you a progress file, restore it here. Otherwise you can start fresh.";
+    document.getElementById("restore").hidden = false;
+  }
+
+  document.getElementById("file").onchange = function (ev) {
+    var f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    f.text().then(function (t) { apply(JSON.parse(t)); finish("/"); }).catch(fail);
+  };
+
+  var params = new URLSearchParams(location.hash.slice(1));
+  var payload = params.get("d");
+  var next = params.get("next") || "/";
+  // Drop the data from the address bar and history straight away.
+  history.replaceState(null, "", location.pathname);
+  if (!payload) {
+    document.getElementById("title").textContent = "Restore your progress";
+    document.getElementById("status").textContent = "Choose the progress file you downloaded from the old site.";
+    document.getElementById("restore").hidden = false;
+    return;
+  }
+  unpack(payload)
+    .then(function (json) { apply(JSON.parse(json)); finish(next); })
+    .catch(fail);
+})();
+</script>
+</body>
+</html>
