@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Retailor has moved</title>
+<link rel="canonical" href="https://retailor.utpaldas.com/" />
+<style>
+  :root { color-scheme: light dark; --bg: #fff; --fg: #111; --muted: #555; --accent: #325283; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #111; --fg: #eee; --muted: #aaa; } }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--fg);
+         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 26rem; padding: 2rem 1.25rem; text-align: center; }
+  p { color: var(--muted); }
+  a.button, button { display: inline-block; margin: .35rem; padding: .7rem 1.2rem; border-radius: .6rem; border: 0;
+         background: var(--accent); color: #fff; font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
+  button.secondary { background: transparent; color: var(--fg); border: 1px solid var(--muted); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Retailor has moved</h1>
+  <p id="status">Taking you to <strong>retailor.utpaldas.com</strong> with your progress…</p>
+  <div id="manual" hidden>
+    <p>Your saved progress is too large to carry over automatically. Download it here, then choose
+       “Restore from file” on the new site.</p>
+    <button id="download" type="button">Download my progress</button>
+    <a class="button secondary" href="https://retailor.utpaldas.com/handover">Restore on retailor.utpaldas.com</a>
+  </div>
+  <noscript><p><a href="https://retailor.utpaldas.com/">Continue to retailor.utpaldas.com</a></p></noscript>
+</main>
+<script>
+/*
+ * Handover from utpaldaslabs.github.io/Retailor/ to https://retailor.utpaldas.com.
+ *
+ * Progress is stored in the visitor's browser, per web address, so a new
+ * address starts empty. This page reads this app's saved keys from the old
+ * address and passes them along in the URL fragment (never sent to any
+ * server) to https://retailor.utpaldas.com/handover, which writes them on the new address.
+ * The data stays here too: nothing is deleted.
+ */
+(function () {
+  var APP = "retailor";
+  var TARGET = "https://retailor.utpaldas.com";
+  var BASE = "/Retailor";
+  var PREFIXES = ["retailor."];
+  var DONE_KEY = "handover:" + APP;
+  // Comfortably inside what every current browser accepts in a URL.
+  var MAX_FRAGMENT = 1500000;
+
+  var path = location.pathname.indexOf(BASE) === 0 ? location.pathname.slice(BASE.length) : "/";
+  var next = (path || "/") + location.search;
+
+  function collect() {
+    var data = {}, n = 0;
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && PREFIXES.some(function (p) { return k.indexOf(p) === 0; })) {
+          data[k] = localStorage.getItem(k);
+          n++;
+        }
+      }
+    } catch (e) { /* storage blocked: nothing to carry */ }
+    return n ? data : null;
+  }
+
+  function toBase64Url(bytes) {
+    var s = "";
+    for (var i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+
+  function pack(json) {
+    var bytes = new TextEncoder().encode(json);
+    if (typeof CompressionStream === "undefined") return Promise.resolve("r." + toBase64Url(bytes));
+    var stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream("gzip"));
+    return new Response(stream).arrayBuffer().then(function (buf) { return "g." + toBase64Url(new Uint8Array(buf)); });
+  }
+
+  function go(url) { location.replace(url); }
+
+  var data = null;
+  try { if (!localStorage.getItem(DONE_KEY)) data = collect(); } catch (e) {}
+  if (!data) return go(TARGET + next + location.hash);
+
+  var json = JSON.stringify({ v: 1, app: APP, at: Date.now(), data: data });
+  pack(json).then(function (payload) {
+    if (payload.length > MAX_FRAGMENT) return manual(json);
+    try { localStorage.setItem(DONE_KEY, String(Date.now())); } catch (e) {}
+    go(TARGET + "/handover#d=" + payload + "&next=" + encodeURIComponent(next));
+  }).catch(function () { manual(json); });
+
+  function manual(json) {
+    document.getElementById("status").hidden = true;
+    document.getElementById("manual").hidden = false;
+    document.getElementById("download").onclick = function () {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+      a.download = APP + "-progress.json";
+      a.click();
+    };
+  }
+})();
+</script>
+</body>
+</html>
