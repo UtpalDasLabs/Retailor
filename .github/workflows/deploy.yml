@@ -1,8 +1,13 @@
-name: Deploy to GitHub Pages
+name: Tests, and the handover at the old address
+
+# The app is served by Vercel at https://retailor.utpaldas.com (vercel.json).
+# GitHub Pages keeps the old address, utpaldaslabs.github.io/Retailor/, alive
+# only to carry each visitor's saved CV over to it: see handover/.
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -11,11 +16,11 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,12 +31,27 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+
+  handover:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble the handover site
+        run: |
+          mkdir site
+          # index.html answers the old start URL; 404.html answers every old
+          # deep link; sw.js replaces the old precache at the same URL.
+          cp handover/index.html site/index.html
+          cp handover/index.html site/404.html
+          cp handover/sw.js site/sw.js
+          touch site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: site
 
   deploy:
-    needs: build
+    needs: handover
     runs-on: ubuntu-latest
     environment:
       name: github-pages
